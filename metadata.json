@@ -1,0 +1,8 @@
+{
+  "name": "Remix ASK ENTERPRISES Electronics",
+  "description": "Direct dealer store for ASK ENTERPRISES featuring Air Conditioners, BLDC Fans, Home Appliances, Biometric Digital Lockers, Dry Irons, and LED Lighting with WhatsApp checkout.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

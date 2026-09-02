@@ -1,0 +1,1075 @@
+import { Product, Category, StoreSettings, Order } from "../types";
+
+export const DEFAULT_CATEGORIES: Category[] = [
+  {
+    "id": "Air Conditioners",
+    "name": "Air Conditioners",
+    "icon": "Wind",
+    "description": "Split, Inverter & 5-Star Energy Saver ACs from Daikin & Voltas"
+  },
+  {
+    "id": "Fans",
+    "name": "Fans",
+    "icon": "Fan",
+    "description": "Ceiling, BLDC Remote, Exhaust & Ventilation Fans from Usha & Luker"
+  },
+  {
+    "id": "Home Appliances",
+    "name": "Home Appliances",
+    "icon": "UtensilsCrossed",
+    "description": "Geysers, Instant Water Heaters, Mixer Grinders & Gas Stoves"
+  },
+  {
+    "id": "Digital Lockers",
+    "name": "Digital Lockers",
+    "icon": "ShieldCheck",
+    "description": "Biometric Fingerprint & Electronic Digital Safes from Ozone"
+  },
+  {
+    "id": "Iron Box",
+    "name": "Iron Box",
+    "icon": "Sparkles",
+    "description": "Dry Irons, Non-stick Teflon Soleplates & Spray Tech Irons"
+  },
+  {
+    "id": "Lighting",
+    "name": "Lighting",
+    "icon": "Lightbulb",
+    "description": "Inverter Emergency Bulbs, LED Panels & Smart Lighting"
+  }
+];
+
+export const CATEGORIES = DEFAULT_CATEGORIES;
+
+export const DEFAULT_STORE_SETTINGS: StoreSettings = {
+  "storeName": "ASK ENTERPRISES",
+  "whatsappNumber": "919100115604",
+  "displayPhone": "9100115604",
+  "address": "PLOT NO.338, MALLAREDDY NAGAR COLONY, GAJULARAMARAM, HYDERABAD- 500055",
+  "supportEmail": "askenterprises0917@gmail.com",
+  "announcementText": "⚡ ASK ENTERPRISES • One Stop Solution for all Plumbing, Electricals, Home Appliances & Air Conditioners",
+  "freeShippingThreshold": 999,
+  "shippingCharge": 79,
+  "upiId": "9100115604ask@axisbank",
+  "upiName": "ASK ENTERPRISES",
+  "themeColor": "monochrome"
+};
+
+export const INITIAL_PRODUCTS: Product[] = [
+  {
+    "id": "P-MPLBP38X",
+    "name": "VOLATS WATER DISPENSER MINI MAGIC PURE F WITHOUT CABINET",
+    "brand": "Voltas",
+    "category": "Home Appliances",
+    "price": 8390,
+    "originalPrice": 11990,
+    "discountPercent": 30,
+    "stock": 5,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPLBP38X_1779720975428_0.jpg?alt=media&token=1562e0dd-fc85-4122-ba3c-1e11f81271d6",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPLBP38X_1779720975428_0.jpg?alt=media&token=1562e0dd-fc85-4122-ba3c-1e11f81271d6",
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPLBP38X_1779720979767_1.jpg?alt=media&token=93cb6dd1-e869-40bd-80a8-6ec6042597f5"
+    ],
+    "shortDescription": "FAST COOLING PERFORMANCE",
+    "description": "FAST COOLING PERFORMANCE\nPOWERFUL AND ECO-FRIENDLY OPERATION\nDURABLE AND LONG-LASTING BUILD",
+    "rating": 4.8,
+    "reviewCount": 15,
+    "specs": {},
+    "features": [
+      "FAST COOLING PERFORMANCE",
+      "POWERFUL AND ECO-FRIENDLY OPERATION",
+      "DURABLE AND LONG-LASTING BUILD"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": true,
+    "isNewArrival": true,
+    "createdAt": "2026-05-25"
+  },
+  {
+    "id": "P-MPKY3XSE",
+    "name": "MELTON PLUS CEILING FAN",
+    "brand": "Melton",
+    "category": "Fans",
+    "price": 975,
+    "originalPrice": 1850,
+    "discountPercent": 47,
+    "stock": 6,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPKY3XSE_1779712092060_0.jpg?alt=media&token=43de2bfa-25db-4644-be5c-ea39cdfcdcab",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPKY3XSE_1779712092060_0.jpg?alt=media&token=43de2bfa-25db-4644-be5c-ea39cdfcdcab"
+    ],
+    "shortDescription": "PEOPLES CHOICE",
+    "description": "PEOPLES CHOICE\nAFFORDABLE PRICE\n1 YR WARRANTY",
+    "rating": 4.8,
+    "reviewCount": 18,
+    "specs": {
+      "Warranty": "Brand Warranty"
+    },
+    "features": [
+      "PEOPLES CHOICE",
+      "AFFORDABLE PRICE",
+      "1 YR WARRANTY"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": true,
+    "isNewArrival": false,
+    "createdAt": "2026-05-25"
+  },
+  {
+    "id": "P-MPDSDVQ8",
+    "name": "Daikin Air Conditioner 1 tonn 5 Star FTKM34XV16",
+    "brand": "Daikin",
+    "category": "Air Conditioners",
+    "price": 40300,
+    "originalPrice": 55900,
+    "discountPercent": 28,
+    "stock": 5,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDSDVQ8_1779264984141_0.jpg?alt=media&token=510c3d4d-924e-4630-9f67-e765072a2147",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDSDVQ8_1779264984141_0.jpg?alt=media&token=510c3d4d-924e-4630-9f67-e765072a2147",
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDSDVQ8_1779264994141_0.jpg?alt=media&token=9b732f01-7de9-4222-a9b0-7cf5e597c1d2"
+    ],
+    "shortDescription": "10 Yrs Warranty on Compressor",
+    "description": "10 Yrs Warranty on Compressor\n5 Yrs Warranty on PCB\nDew Clean technology\nISEER rating : 4.4\nPatented Swing Inverter Compressor\nR-32 Green Refrigerant\nStabilizer Inside Operation\nStabilizer Free Operation\nGood Sleep off Timer\nAnti-Corrosion Treatment\n",
+    "rating": 4.8,
+    "reviewCount": 21,
+    "specs": {
+      "Type": "Split Air Conditioner",
+      "Condenser Coil": "100% Copper",
+      "Capacity": "1.0 Ton",
+      "Energy Rating": "5 Star BEE"
+    },
+    "features": [
+      "10 Yrs Warranty on Compressor",
+      "5 Yrs Warranty on PCB",
+      "Dew Clean technology",
+      "ISEER rating : 4.4",
+      "Patented Swing Inverter Compressor",
+      "R-32 Green Refrigerant",
+      "Stabilizer Inside Operation",
+      "Stabilizer Free Operation",
+      "Good Sleep off Timer",
+      "Anti-Corrosion Treatment"
+    ],
+    "warranty": "1 Year Comprehensive + 5 Years Compressor Warranty",
+    "isFeatured": true,
+    "isNewArrival": false,
+    "createdAt": "2026-05-20"
+  },
+  {
+    "id": "P-MPDS7CSN",
+    "name": "Daikin Air Conditioner 1.5 Tonn 5 Star FTKU50XV16",
+    "brand": "Daikin",
+    "category": "Air Conditioners",
+    "price": 47800,
+    "originalPrice": 65800,
+    "discountPercent": 27,
+    "stock": 5,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDS7CSN_1779264698259_0.jpg?alt=media&token=fa78b4b5-bc9b-4131-aaa6-8bac2729bae7",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDS7CSN_1779264698259_0.jpg?alt=media&token=fa78b4b5-bc9b-4131-aaa6-8bac2729bae7",
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDS7CSN_1779264711133_0.jpg?alt=media&token=fd0a9838-3510-4dd6-8fd9-62e6b1508498"
+    ],
+    "shortDescription": "10 Yrs Warranty on Compressor",
+    "description": "10 Yrs Warranty on Compressor\n5 Yrs Warranty on PCB\nDew Clean technology\nISEER rating : 4.4\nPatented Swing Inverter Compressor\nR-32 Green Refrigerant\nStabilizer Inside Operation\nStabilizer Free Operation\nGood Sleep off Timer\nAnti-Corrosion Treatment\n",
+    "rating": 4.8,
+    "reviewCount": 24,
+    "specs": {
+      "Type": "Split Air Conditioner",
+      "Condenser Coil": "100% Copper",
+      "Capacity": "1.5 Ton",
+      "Energy Rating": "5 Star BEE"
+    },
+    "features": [
+      "10 Yrs Warranty on Compressor",
+      "5 Yrs Warranty on PCB",
+      "Dew Clean technology",
+      "ISEER rating : 4.4",
+      "Patented Swing Inverter Compressor",
+      "R-32 Green Refrigerant",
+      "Stabilizer Inside Operation",
+      "Stabilizer Free Operation",
+      "Good Sleep off Timer",
+      "Anti-Corrosion Treatment"
+    ],
+    "warranty": "1 Year Comprehensive + 5 Years Compressor Warranty",
+    "isFeatured": true,
+    "isNewArrival": true,
+    "createdAt": "2026-05-20"
+  },
+  {
+    "id": "P-MPDRC9CN",
+    "name": "Daikin Air Conditioner 1 Tonn 3 Star FTKC35XV16",
+    "brand": "Daikin",
+    "category": "Air Conditioners",
+    "price": 34300,
+    "originalPrice": 47800,
+    "discountPercent": 28,
+    "stock": 5,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDRC9CN_1779263243237_0.jpg?alt=media&token=cd77854f-974a-4b5d-b1fd-3bd23e2ed50e",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDRC9CN_1779263243237_0.jpg?alt=media&token=cd77854f-974a-4b5d-b1fd-3bd23e2ed50e",
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDRC9CN_1779263246703_1.jpg?alt=media&token=c53068a5-4bab-42ca-acb9-85e26225cd2f"
+    ],
+    "shortDescription": "10 Yrs Warranty on Compressor",
+    "description": "10 Yrs Warranty on Compressor\n5 Yrs Warranty on PCB\nDew Clean technology\nISEER rating : 4.4\nPatented Swing Inverter Compressor\nR-32 Green Refrigerant\nStabilizer Inside Operation\nStabilizer Free Operation\nGood Sleep off Timer\nAnti-Corrosion Treatment",
+    "rating": 4.8,
+    "reviewCount": 27,
+    "specs": {
+      "Type": "Split Air Conditioner",
+      "Condenser Coil": "100% Copper",
+      "Capacity": "1.0 Ton",
+      "Energy Rating": "3 Star BEE"
+    },
+    "features": [
+      "10 Yrs Warranty on Compressor",
+      "5 Yrs Warranty on PCB",
+      "Dew Clean technology",
+      "ISEER rating : 4.4",
+      "Patented Swing Inverter Compressor",
+      "R-32 Green Refrigerant",
+      "Stabilizer Inside Operation",
+      "Stabilizer Free Operation",
+      "Good Sleep off Timer",
+      "Anti-Corrosion Treatment"
+    ],
+    "warranty": "1 Year Comprehensive + 5 Years Compressor Warranty",
+    "isFeatured": true,
+    "isNewArrival": false,
+    "createdAt": "2026-05-20"
+  },
+  {
+    "id": "P-MPDQNQ02",
+    "name": "DAIKIN Air Conditioner 1.5 Tonn 3 Star FTKC50XV16",
+    "brand": "Daikin",
+    "category": "Air Conditioners",
+    "price": 37600,
+    "originalPrice": 54400,
+    "discountPercent": 31,
+    "stock": 5,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDQNQ02_1779262733306_0.jpg?alt=media&token=e6e37ebc-c8d7-46a1-991c-33af5a6203a4",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDQNQ02_1779262733306_0.jpg?alt=media&token=e6e37ebc-c8d7-46a1-991c-33af5a6203a4",
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPDQNQ02_1779264404161_0.jpg?alt=media&token=f113a8be-d531-4c8f-9436-03f318362411"
+    ],
+    "shortDescription": "10 Yrs Warranty on Compressor",
+    "description": "10 Yrs Warranty on Compressor\n5 Yrs Warranty on PCB\nDew Clean technology\nISEER rating : 4.4\nPatented Swing Inverter Compressor\nR-32 Green Refrigerant\nStabilizer Inside Operation\nStabilizer Free Operation\nGood Sleep off Timer\nAnti-Corrosion Treatment",
+    "rating": 4.8,
+    "reviewCount": 30,
+    "specs": {
+      "Type": "Split Air Conditioner",
+      "Condenser Coil": "100% Copper",
+      "Capacity": "1.5 Ton",
+      "Energy Rating": "3 Star BEE"
+    },
+    "features": [
+      "10 Yrs Warranty on Compressor",
+      "5 Yrs Warranty on PCB",
+      "Dew Clean technology",
+      "ISEER rating : 4.4",
+      "Patented Swing Inverter Compressor",
+      "R-32 Green Refrigerant",
+      "Stabilizer Inside Operation",
+      "Stabilizer Free Operation",
+      "Good Sleep off Timer",
+      "Anti-Corrosion Treatment"
+    ],
+    "warranty": "1 Year Comprehensive + 5 Years Compressor Warranty",
+    "isFeatured": true,
+    "isNewArrival": false,
+    "createdAt": "2026-05-20"
+  },
+  {
+    "id": "P-MPC71M16",
+    "name": "Usha Geyser Instafresh Neo 5 Litre Instant Water Heater (White), Wall Mounting Free Installation",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 3500,
+    "originalPrice": 7990,
+    "discountPercent": 56,
+    "stock": 18,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPC71M16_1779274878303_0.jpg?alt=media&token=efada5fd-dfb5-4d66-81d4-238c5b82c6c0",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPC71M16_1779274878303_0.jpg?alt=media&token=efada5fd-dfb5-4d66-81d4-238c5b82c6c0"
+    ],
+    "shortDescription": "SS304L Leak Proof Tank: Single body without welding leak-proof , corrosion resistant tank for long durability",
+    "description": "SS304L Leak Proof Tank: Single body without welding leak-proof , corrosion resistant tank for long durability\nCapillary Thermostat: High precision temperature control capillary type thermostat.\nHigh Grade Exterior: High Grade gloss finish, rust proof ABS body.\nPressure Optimised Capacity: The High pressure withstanding capacity of up to 6.5 bar",
+    "rating": 4.8,
+    "reviewCount": 33,
+    "specs": {
+      "Capacity": "5 Litres"
+    },
+    "features": [
+      "SS304L Leak Proof Tank: Single body without welding leak-proof , corrosion resistant tank for long durability",
+      "Capillary Thermostat: High precision temperature control capillary type thermostat.",
+      "High Grade Exterior: High Grade gloss finish, rust proof ABS body.",
+      "Pressure Optimised Capacity: The High pressure withstanding capacity of up to 6.5 bar"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": true,
+    "isNewArrival": true,
+    "createdAt": "2026-05-19"
+  },
+  {
+    "id": "P-MPC6DPMQ",
+    "name": "USHA Mixer Grinder MG3576 Imprezza 750W",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 3780,
+    "originalPrice": 7290,
+    "discountPercent": 48,
+    "stock": 4,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPC6DPMQ_1779167744774_0.jpg?alt=media&token=eb67b47a-2115-4880-8d94-765d8cb99bdf",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPC6DPMQ_1779167744774_0.jpg?alt=media&token=eb67b47a-2115-4880-8d94-765d8cb99bdf"
+    ],
+    "shortDescription": "100% Copper Motor",
+    "description": "100% Copper Motor\nStylish & sleek design \nHeavy gauge Stainless Steel Jars with flow breakers for finer grinding\nSuper suction feet for high stability\nStainless Steel Food Safe Blades\nOverload protector for Motor safety\n3 speed setting with whip option\nABS Shock Proof Body",
+    "rating": 4.8,
+    "reviewCount": 36,
+    "specs": {
+      "Motor Power": "750 Watts"
+    },
+    "features": [
+      "100% Copper Motor",
+      "Stylish & sleek design",
+      "Heavy gauge Stainless Steel Jars with flow breakers for finer grinding",
+      "Super suction feet for high stability",
+      "Stainless Steel Food Safe Blades",
+      "Overload protector for Motor safety",
+      "3 speed setting with whip option",
+      "ABS Shock Proof Body"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": true,
+    "isNewArrival": false,
+    "createdAt": "2026-05-19"
+  },
+  {
+    "id": "P-MPAY2A1T",
+    "name": "LUKER radial BLDC Ceiling Fan",
+    "brand": "Luker",
+    "category": "Fans",
+    "price": 3320,
+    "originalPrice": 5880,
+    "discountPercent": 44,
+    "stock": 16,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPAY2A1T_1779093230914_0.jpg?alt=media&token=23d0d882-9d2d-44d5-bd92-93bf5a6a9f7c",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPAY2A1T_1779093230914_0.jpg?alt=media&token=23d0d882-9d2d-44d5-bd92-93bf5a6a9f7c"
+    ],
+    "shortDescription": "BEE 5 star Rated Energy Efficient Ceiling Fan for Living Room, High Air Delivery, Black-Black-Black, 3 Yrs Warranty",
+    "description": "BEE 5 star Rated Energy Efficient Ceiling Fan for Living Room, High Air Delivery, Black-Black-Black, 3 Yrs Warranty",
+    "rating": 4.8,
+    "reviewCount": 39,
+    "specs": {
+      "Motor Type": "BLDC Energy-Saving Motor",
+      "Warranty": "Brand Warranty"
+    },
+    "features": [
+      "BEE 5 star Rated Energy Efficient Ceiling Fan for Living Room, High Air Delivery, Black-Black-Black, 3 Yrs Warranty"
+    ],
+    "warranty": "2 Years Brand Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-18"
+  },
+  {
+    "id": "P-MPA8Q2NI",
+    "name": "Usha Warmboy 15 Litre Storage Wall Water Heater (White) Free Installation",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 6350,
+    "originalPrice": 12490,
+    "discountPercent": 49,
+    "stock": 2,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA8Q2NI_1779276881478_0.jpg?alt=media&token=4c6ad539-a649-4027-a85f-d85ace20cd19",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA8Q2NI_1779276881478_0.jpg?alt=media&token=4c6ad539-a649-4027-a85f-d85ace20cd19"
+    ],
+    "shortDescription": "CopperPro: Copper heating element for efficient and silent heating.",
+    "description": "CopperPro: Copper heating element for efficient and silent heating.\nWhirl Flow Technology: For faster heating and maximum energy saving.\nMagnesium Anode Advantage: Heavy duty magnesium anode rod to prevent rust or corrosion and maintain life of element even in hard water\nGlass line coating: Protects heating element and inner tank for longer life.\nLiquid Enamel Advantage: Liquid Enamel coated inlet/outlet pipe helps prevent rust.",
+    "rating": 4.8,
+    "reviewCount": 42,
+    "specs": {
+      "Capacity": "15 Litres"
+    },
+    "features": [
+      "CopperPro: Copper heating element for efficient and silent heating.",
+      "Whirl Flow Technology: For faster heating and maximum energy saving.",
+      "Magnesium Anode Advantage: Heavy duty magnesium anode rod to prevent rust or corrosion and maintain life of element even in hard water",
+      "Glass line coating: Protects heating element and inner tank for longer life.",
+      "Liquid Enamel Advantage: Liquid Enamel coated inlet/outlet pipe helps prevent rust."
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": true,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA8GK5M",
+    "name": "Usha Cylandra 15 Litre Storage Water Heater With Free Installation (White), Wall Mounting Free Installation",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 7050,
+    "originalPrice": 12490,
+    "discountPercent": 44,
+    "stock": 2,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA8GK5M_1779276732966_0.jpg?alt=media&token=3bc108d8-6799-4c0a-81c1-a533115560d3",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA8GK5M_1779276732966_0.jpg?alt=media&token=3bc108d8-6799-4c0a-81c1-a533115560d3"
+    ],
+    "shortDescription": "2000W",
+    "description": "2000W\nCopper heating element for efficient and silent heating\nWhirl Flow Technology\nMagnesium Anode Advantage",
+    "rating": 4.8,
+    "reviewCount": 45,
+    "specs": {
+      "Capacity": "15 Litres"
+    },
+    "features": [
+      "2000W",
+      "Copper heating element for efficient and silent heating",
+      "Whirl Flow Technology",
+      "Magnesium Anode Advantage"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA7FE26",
+    "name": "USHA EXHAUST FANS Aeroclean Pro 150mm",
+    "brand": "USHA",
+    "category": "Fans",
+    "price": 1690,
+    "originalPrice": 2299,
+    "discountPercent": 26,
+    "stock": 10,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA7FE26_1779048638763_0.jpg?alt=media&token=8f3f4aa5-2e3b-4a04-87a8-ef2d7e07021b",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA7FE26_1779048638763_0.jpg?alt=media&token=8f3f4aa5-2e3b-4a04-87a8-ef2d7e07021b"
+    ],
+    "shortDescription": "High Speed 100% Copper Motor | Goodbye Oil & Dust Coating |Scratch and Stain Resistant| Easy to Clean | 2-Year Warranty | Metallic Grey",
+    "description": "High Speed 100% Copper Motor | Goodbye Oil & Dust Coating |Scratch and Stain Resistant| Easy to Clean | 2-Year Warranty | Metallic Grey",
+    "rating": 4.8,
+    "reviewCount": 48,
+    "specs": {
+      "Sweep": "150 mm",
+      "Warranty": "Brand Warranty"
+    },
+    "features": [
+      "High Speed 100% Copper Motor | Goodbye Oil & Dust Coating |Scratch and Stain Resistant| Easy to Clean | 2-Year Warranty | Metallic Grey"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA7A9KS",
+    "name": "USHA Goliath Spray Tech 1200Watt Dry Iron with Water Spray Feature",
+    "brand": "USHA",
+    "category": "Iron Box",
+    "price": 1470,
+    "originalPrice": 2290,
+    "discountPercent": 36,
+    "stock": 6,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA7A9KS_1779276447851_0.jpg?alt=media&token=141859cf-cf74-4e8b-9a29-94fcf825b15a",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA7A9KS_1779276447851_0.jpg?alt=media&token=141859cf-cf74-4e8b-9a29-94fcf825b15a"
+    ],
+    "shortDescription": "Double Coated Golden Non Stick Soleplate for Longer Durability | 360° Swivel Cord | 2 Years Warranty | (Blue & White)",
+    "description": "Double Coated Golden Non Stick Soleplate for Longer Durability | 360° Swivel Cord | 2 Years Warranty | (Blue & White)",
+    "rating": 4.8,
+    "reviewCount": 51,
+    "specs": {
+      "Power": "1200 Watts",
+      "Soleplate": "Golden American Heritage Coating"
+    },
+    "features": [
+      "Double Coated Golden Non Stick Soleplate for Longer Durability | 360° Swivel Cord | 2 Years Warranty | (Blue & White)"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": true,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA6Y2EP",
+    "name": "USHA Cook Top Maxus GS2002 Stainless Steel Manual Gas Stove (2 Burners)",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 2290,
+    "originalPrice": 4290,
+    "discountPercent": 47,
+    "stock": 4,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA6Y2EP_1779047942283_0.jpg?alt=media&token=533b078a-3589-4dd2-9ec7-74dc5d690933",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA6Y2EP_1779047942283_0.jpg?alt=media&token=533b078a-3589-4dd2-9ec7-74dc5d690933"
+    ],
+    "shortDescription": "Easy knob replacement",
+    "description": "Easy knob replacement\nBurner Diameter : 68 mm &  78 mm\nStainless steel body with gloss finish",
+    "rating": 4.8,
+    "reviewCount": 54,
+    "specs": {},
+    "features": [
+      "Easy knob replacement",
+      "Burner Diameter : 68 mm &  78 mm",
+      "Stainless steel body with gloss finish"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA6RPSW",
+    "name": "USHA Cook Top Ebony Neo 2003 SS",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 3440,
+    "originalPrice": 6290,
+    "discountPercent": 45,
+    "stock": 2,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA6RPSW_1779047419811_0.jpg?alt=media&token=176b30a4-fbf5-47a7-86e1-4083e004e8bc",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA6RPSW_1779047419811_0.jpg?alt=media&token=176b30a4-fbf5-47a7-86e1-4083e004e8bc"
+    ],
+    "shortDescription": "Brushed Stainless steel body",
+    "description": "Brushed Stainless steel body\n25% longer rubber feet for easy cleaning\nMirror finish stainless steel drip tray\nPowder coated pan support\nBurner Diameter : 68 mm &  78 mm",
+    "rating": 4.8,
+    "reviewCount": 17,
+    "specs": {},
+    "features": [
+      "Brushed Stainless steel body",
+      "25% longer rubber feet for easy cleaning",
+      "Mirror finish stainless steel drip tray",
+      "Powder coated pan support",
+      "Burner Diameter : 68 mm &  78 mm"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA6JQB3",
+    "name": "USHA Exhaust Fan EF CRISP AIR VX 200MM WHITE ISI",
+    "brand": "USHA",
+    "category": "Fans",
+    "price": 1200,
+    "originalPrice": 1980,
+    "discountPercent": 39,
+    "stock": 12,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA6JQB3_1779275853748_0.jpg?alt=media&token=6402dfc3-a5de-4d0e-abad-48e14a71b3b4",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA6JQB3_1779275853748_0.jpg?alt=media&token=6402dfc3-a5de-4d0e-abad-48e14a71b3b4"
+    ],
+    "shortDescription": "100% Copper Motor | Inbuilt Back Shutters |Detachable Oil & Dust Collector | Thermal Fuse Protection | Quiet Operation | White",
+    "description": "100% Copper Motor | Inbuilt Back Shutters |Detachable Oil & Dust Collector | Thermal Fuse Protection | Quiet Operation | White",
+    "rating": 4.8,
+    "reviewCount": 20,
+    "specs": {
+      "Sweep": "200 mm",
+      "Warranty": "Brand Warranty"
+    },
+    "features": [
+      "100% Copper Motor | Inbuilt Back Shutters |Detachable Oil & Dust Collector | Thermal Fuse Protection | Quiet Operation | White"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": true,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA63VTP",
+    "name": "USHA Swift Fan 1200mm",
+    "brand": "USHA",
+    "category": "Fans",
+    "price": 1800,
+    "originalPrice": 2745,
+    "discountPercent": 34,
+    "stock": 12,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA63VTP_1779275746503_0.jpg?alt=media&token=4e540cb8-a481-4a60-aa4e-4f7c7352e6ed",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA63VTP_1779275746503_0.jpg?alt=media&token=4e540cb8-a481-4a60-aa4e-4f7c7352e6ed"
+    ],
+    "shortDescription": "High lift angle of blade for wider air spread",
+    "description": "High lift angle of blade for wider air spread\nSuperior high permeability grade electric steel lamination for improved life\nGlossy powder coated paint for superior finish and longer life\nPerforms well even at low voltage\n2-year warranty",
+    "rating": 4.8,
+    "reviewCount": 23,
+    "specs": {
+      "Sweep": "200 mm",
+      "Warranty": "Brand Warranty"
+    },
+    "features": [
+      "High lift angle of blade for wider air spread",
+      "Superior high permeability grade electric steel lamination for improved life",
+      "Glossy powder coated paint for superior finish and longer life",
+      "Performs well even at low voltage",
+      "2-year warranty"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA5NMHU",
+    "name": "USHA AeroEdge Plus 1200mm BLDC Ceiling Fan with IR Remote | LED Indicator",
+    "brand": "USHA",
+    "category": "Fans",
+    "price": 3950,
+    "originalPrice": 5250,
+    "discountPercent": 25,
+    "stock": 4,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA5NMHU_1779275508889_0.jpg?alt=media&token=4bdf2047-820a-4fb7-8237-acba83a22292",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA5NMHU_1779275508889_0.jpg?alt=media&token=4bdf2047-820a-4fb7-8237-acba83a22292"
+    ],
+    "shortDescription": "100% Copper Motor",
+    "description": "100% Copper Motor\nLED Speed Meter\nBI- Directional Movement\nWhisper Quiet Operation\nPower 35 W\n2 Years Warranty",
+    "rating": 4.8,
+    "reviewCount": 26,
+    "specs": {
+      "Motor Type": "BLDC Energy-Saving Motor",
+      "Sweep": "200 mm",
+      "Warranty": "Brand Warranty"
+    },
+    "features": [
+      "100% Copper Motor",
+      "LED Speed Meter",
+      "BI- Directional Movement",
+      "Whisper Quiet Operation",
+      "Power 35 W",
+      "2 Years Warranty"
+    ],
+    "warranty": "2 Years Brand Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA5IJ1H",
+    "name": "USHA TISVA Inverter Bulb 9 W",
+    "brand": "USHA",
+    "category": "Lighting",
+    "price": 275,
+    "originalPrice": 599,
+    "discountPercent": 54,
+    "stock": 240,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA5IJ1H_1779276559352_0.jpg?alt=media&token=c4dc4076-0ad3-459a-8f0d-8dae248810cc",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA5IJ1H_1779276559352_0.jpg?alt=media&token=c4dc4076-0ad3-459a-8f0d-8dae248810cc"
+    ],
+    "shortDescription": "Energy efficient with long life built of 25,000 burning hours",
+    "description": "Energy efficient with long life built of 25,000 burning hours\nLow glare uniform light spread with Beam angle of 120 degrees\nFast charging Lithium ion battery with charging time of 8 hours\nExcellent power cut solution with power backup of upto 4 hours\nExcellent color quality with CRI > 80",
+    "rating": 4.8,
+    "reviewCount": 29,
+    "specs": {
+      "Wattage": "9 Watts",
+      "Technology": "Inverter Emergency Backup LED"
+    },
+    "features": [
+      "Energy efficient with long life built of 25,000 burning hours",
+      "Low glare uniform light spread with Beam angle of 120 degrees",
+      "Fast charging Lithium ion battery with charging time of 8 hours",
+      "Excellent power cut solution with power backup of upto 4 hours",
+      "Excellent color quality with CRI > 80"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": true,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA5C9S7",
+    "name": "USHA Dry Iron TEFLON 1602 LW 1000W LAVENDER & WHITE",
+    "brand": "USHA",
+    "category": "Iron Box",
+    "price": 550,
+    "originalPrice": 1390,
+    "discountPercent": 60,
+    "stock": 24,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA5C9S7_1779276275355_0.jpg?alt=media&token=eb23b5ed-af52-4ab9-91b3-d8f8ae00a9b4",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA5C9S7_1779276275355_0.jpg?alt=media&token=eb23b5ed-af52-4ab9-91b3-d8f8ae00a9b4"
+    ],
+    "shortDescription": "Power 1000W: For Effective and Effortless Ironing",
+    "description": "Power 1000W: For Effective and Effortless Ironing\nEasy ironing under buttons\n180° Swivel Cord: For Flexible Movement\nConvenient and shock proof plastic body: ensures safe ironing experience\n5 fabric settings: suited for all types of fabric with Non-Stick PTFE Coated Soleplate that helps the iron glide easily on fabric for wrinkle-free, smooth finish",
+    "rating": 4.8,
+    "reviewCount": 32,
+    "specs": {
+      "Power": "1000 Watts",
+      "Soleplate": "Non-stick Teflon Coating"
+    },
+    "features": [
+      "Power 1000W: For Effective and Effortless Ironing",
+      "Easy ironing under buttons",
+      "180° Swivel Cord: For Flexible Movement",
+      "Convenient and shock proof plastic body: ensures safe ironing experience",
+      "5 fabric settings: suited for all types of fabric with Non-Stick PTFE Coated Soleplate that helps the iron glide easily on fabric for wrinkle-free, smooth finish"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA4WIVT",
+    "name": "USHA Dry Iron 4175 P",
+    "brand": "USHA",
+    "category": "Iron Box",
+    "price": 565,
+    "originalPrice": 990,
+    "discountPercent": 43,
+    "stock": 12,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA4WIVT_1779276153303_0.jpg?alt=media&token=aebb590e-17b5-4de4-893f-8a2e16bc92d4",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA4WIVT_1779276153303_0.jpg?alt=media&token=aebb590e-17b5-4de4-893f-8a2e16bc92d4"
+    ],
+    "shortDescription": "Power 750 W : for quick heating and ironing",
+    "description": "Power 750 W : for quick heating and ironing\nUltra-light weight : Sleek and compact iron ensures the best ironing experience\nNon-stick PTFE coated (Black Weilburger) sole plate : Easy gliding over fabric and long-lasting performance\nDual Layer Safety with Thermostat & Thermal fuse\nShockproof Fully Covered plastic Body",
+    "rating": 4.8,
+    "reviewCount": 35,
+    "specs": {
+      "Soleplate": "Golden American Heritage Coating"
+    },
+    "features": [
+      "Power 750 W : for quick heating and ironing",
+      "Ultra-light weight : Sleek and compact iron ensures the best ironing experience",
+      "Non-stick PTFE coated (Black Weilburger) sole plate : Easy gliding over fabric and long-lasting performance",
+      "Dual Layer Safety with Thermostat & Thermal fuse",
+      "Shockproof Fully Covered plastic Body"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MPA4LOX2",
+    "name": "USHA Dry Iron Aurora",
+    "brand": "USHA",
+    "category": "Iron Box",
+    "price": 595,
+    "originalPrice": 1390,
+    "discountPercent": 57,
+    "stock": 12,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA4LOX2_1779043872812_0.jpg?alt=media&token=55cabcc3-d498-4436-b6da-6fa7a060eea4",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPA4LOX2_1779043872812_0.jpg?alt=media&token=55cabcc3-d498-4436-b6da-6fa7a060eea4"
+    ],
+    "shortDescription": "1000 W for faster heating",
+    "description": "1000 W for faster heating\nCompact & light weight for travel or home use\nInnovative tail light indicator for convenient ironing",
+    "rating": 4.8,
+    "reviewCount": 38,
+    "specs": {
+      "Soleplate": "Golden American Heritage Coating"
+    },
+    "features": [
+      "1000 W for faster heating",
+      "Compact & light weight for travel or home use",
+      "Innovative tail light indicator for convenient ironing"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": true,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MP9XAJBO",
+    "name": "Ozone Safe - Tusker 11",
+    "brand": "Ozone",
+    "category": "Digital Lockers",
+    "price": 6190,
+    "originalPrice": 8790,
+    "discountPercent": 30,
+    "stock": 4,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9XAJBO_1779031488636_0.jpg?alt=media&token=0ada5a4c-7909-473b-815f-97f6f9569678",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9XAJBO_1779031488636_0.jpg?alt=media&token=0ada5a4c-7909-473b-815f-97f6f9569678"
+    ],
+    "shortDescription": "Size (Inch) :  (H) 9.84 X (W) 13.78 X (D) 9.84",
+    "description": "Size (Inch) :  (H) 9.84 X (W) 13.78 X (D) 9.84\nWeight (Kgs) : 9.50 (appx)\nVolume (Ltr) : 16\nAccessories: 1 Shelf Inside",
+    "rating": 4.8,
+    "reviewCount": 41,
+    "specs": {
+      "Lock Type": "Digital Keypad + Master Key"
+    },
+    "features": [
+      "Size (Inch) :  (H) 9.84 X (W) 13.78 X (D) 9.84",
+      "Weight (Kgs) : 9.50 (appx)",
+      "Volume (Ltr) : 16",
+      "Accessories: 1 Shelf Inside"
+    ],
+    "warranty": "2 Years Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MP9WZJSW",
+    "name": "USHA Aqua buddy Neo 10 Ltrs",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 7300,
+    "originalPrice": 15490,
+    "discountPercent": 53,
+    "stock": 1,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9WZJSW_1779030961510_0.jpg?alt=media&token=8f5cb4e9-78d7-44ef-9361-3976489f457b",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9WZJSW_1779030961510_0.jpg?alt=media&token=8f5cb4e9-78d7-44ef-9361-3976489f457b"
+    ],
+    "shortDescription": "Whirl Flow Technology",
+    "description": "Whirl Flow Technology\nCopper heating element for efficient and silent heating\nMagnesium Anode Advantage\nGlassline Coating",
+    "rating": 4.8,
+    "reviewCount": 44,
+    "specs": {
+      "Capacity": "10 Litres"
+    },
+    "features": [
+      "Whirl Flow Technology",
+      "Copper heating element for efficient and silent heating",
+      "Magnesium Anode Advantage",
+      "Glassline Coating"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MP9WKOAS",
+    "name": "USHA 2 Slice Pop-up-Toaster",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 1450,
+    "originalPrice": 2290,
+    "discountPercent": 37,
+    "stock": 4,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9WKOAS_1779030320861_0.jpg?alt=media&token=d89bf12d-26aa-44e5-bce2-7925d0f5a8b7",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9WKOAS_1779030320861_0.jpg?alt=media&token=d89bf12d-26aa-44e5-bce2-7925d0f5a8b7"
+    ],
+    "shortDescription": "•    2 Slice toaster",
+    "description": "•    2 Slice toaster\n•    6 Browning settings\n•    Cool touch body\n•    Dust cover\n•    Croissant/Bun warmer",
+    "rating": 4.8,
+    "reviewCount": 47,
+    "specs": {},
+    "features": [
+      "•    2 Slice toaster",
+      "•    6 Browning settings",
+      "•    Cool touch body",
+      "•    Dust cover",
+      "•    Croissant/Bun warmer"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": true,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MP9WF06Z",
+    "name": "USHA Wet Grinder Colossal Ergo",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 6800,
+    "originalPrice": 10490,
+    "discountPercent": 35,
+    "stock": 2,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9WF06Z_1779029943379_0.jpg?alt=media&token=ab468513-a5e0-4615-ae17-8aad36100aed",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9WF06Z_1779029943379_0.jpg?alt=media&token=ab468513-a5e0-4615-ae17-8aad36100aed"
+    ],
+    "shortDescription": "2L Food-grade stainless steel drum",
+    "description": "2L Food-grade stainless steel drum\nEasy tilting mechanism for easy pouring\nBreak-resistant Transparent Polycarbonate Lid for easy view of grinding\nDual flow breakers ensure even grinding and fluffy batter\n100% copper motor",
+    "rating": 4.8,
+    "reviewCount": 50,
+    "specs": {},
+    "features": [
+      "2L Food-grade stainless steel drum",
+      "Easy tilting mechanism for easy pouring",
+      "Break-resistant Transparent Polycarbonate Lid for easy view of grinding",
+      "Dual flow breakers ensure even grinding and fluffy batter",
+      "100% copper motor"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MP9VVQW3",
+    "name": "USHA Speed Master 500W MG",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 2800,
+    "originalPrice": 4200,
+    "discountPercent": 33,
+    "stock": 8,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9VVQW3_1779029581863_0.jpg?alt=media&token=fd378926-e70e-4f5f-8154-2965a608784c",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9VVQW3_1779029581863_0.jpg?alt=media&token=fd378926-e70e-4f5f-8154-2965a608784c"
+    ],
+    "shortDescription": "Power : 500 W",
+    "description": "Power : 500 W\nWarranty : 2 years on product and 5 years on motor\nFree Home Service* (Applicable for 2 Years)\nISI Certified Icon\n ",
+    "rating": 4.8,
+    "reviewCount": 53,
+    "specs": {
+      "Motor Power": "500 Watts"
+    },
+    "features": [
+      "Power : 500 W",
+      "Warranty : 2 years on product and 5 years on motor",
+      "Free Home Service* (Applicable for 2 Years)",
+      "ISI Certified Icon"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MP9VMM9G",
+    "name": "USHA Mixer Grinder 750W Smash Plus MG 3771",
+    "brand": "USHA",
+    "category": "Home Appliances",
+    "price": 3500,
+    "originalPrice": 5890,
+    "discountPercent": 41,
+    "stock": 8,
+    "stockStatus": "In Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9VMM9G_1779028775420_0.jpg?alt=media&token=c2bededf-3140-4008-b51b-fbe72424824d",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9VMM9G_1779028775420_0.jpg?alt=media&token=c2bededf-3140-4008-b51b-fbe72424824d"
+    ],
+    "shortDescription": "100% Copper Motor",
+    "description": "100% Copper Motor\nCompact & Stable Design\n3 Stainless Steel Jars",
+    "rating": 4.8,
+    "reviewCount": 16,
+    "specs": {
+      "Motor Power": "750 Watts"
+    },
+    "features": [
+      "100% Copper Motor",
+      "Compact & Stable Design",
+      "3 Stainless Steel Jars"
+    ],
+    "warranty": "1 Year Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": true,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MP9GLNNA",
+    "name": "Voltas Split Air Conditioner, 1.5 Ton, 5 Star - 185INV Vectra Elegant",
+    "brand": "Voltas",
+    "category": "Air Conditioners",
+    "price": 42000,
+    "originalPrice": 73990,
+    "discountPercent": 43,
+    "stock": 1,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9GLNNA_1779275089734_0.jpg?alt=media&token=947d93ff-1de9-433d-b17d-4ed6e8b03bfa",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9GLNNA_1779275089734_0.jpg?alt=media&token=947d93ff-1de9-433d-b17d-4ed6e8b03bfa",
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP9GLNNA_1779275099585_0.jpg?alt=media&token=d4ea9d0f-6c6f-487b-b4f5-f28ba0c479c2"
+    ],
+    "shortDescription": "BEE Star Rating: 5 Star",
+    "description": "BEE Star Rating: 5 Star\n5000W Cooling Capacity\n5 Step Adjustable Mode\n2 Way Swing\nAnti Corrosive Gold Fin Condenser\nAnti Dust Filter with Anti microbial coating\nHydrophilic Gold Fin Coating on Evaporator\nAnti corrosive coating on Indoor Unit Coil (Hairpin side)\nHigh Ambient Cooling even at 52 degree Celsius\nFR Grade Material on Indoor PCB box\nAnti Fungi technology\nMemory Restart\nSleep Mode\nAnti freeze Thermostat\n100% Copper\nAcoustic Jacket on compressor",
+    "rating": 4.8,
+    "reviewCount": 19,
+    "specs": {
+      "Type": "Split Air Conditioner",
+      "Condenser Coil": "100% Copper",
+      "Capacity": "1.5 Ton",
+      "Energy Rating": "5 Star BEE"
+    },
+    "features": [
+      "BEE Star Rating: 5 Star",
+      "5000W Cooling Capacity",
+      "5 Step Adjustable Mode",
+      "2 Way Swing",
+      "Anti Corrosive Gold Fin Condenser",
+      "Anti Dust Filter with Anti microbial coating",
+      "Hydrophilic Gold Fin Coating on Evaporator",
+      "Anti corrosive coating on Indoor Unit Coil (Hairpin side)",
+      "High Ambient Cooling even at 52 degree Celsius",
+      "FR Grade Material on Indoor PCB box",
+      "Anti Fungi technology",
+      "Memory Restart",
+      "Sleep Mode",
+      "Anti freeze Thermostat",
+      "100% Copper",
+      "Acoustic Jacket on compressor"
+    ],
+    "warranty": "1 Year Comprehensive + 5 Years Compressor Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-17"
+  },
+  {
+    "id": "P-MP823WU1",
+    "name": "OZONE DIGITAL LOCKER- SAFILO BIO-2",
+    "brand": "Ozone",
+    "category": "Digital Lockers",
+    "price": 14790,
+    "originalPrice": 20890,
+    "discountPercent": 29,
+    "stock": 1,
+    "stockStatus": "Low Stock",
+    "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP823WU1_1778919952927_0.jpg?alt=media&token=e78ad21e-85c5-4c32-87a9-0580aad9c366",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MP823WU1_1778919952927_0.jpg?alt=media&token=e78ad21e-85c5-4c32-87a9-0580aad9c366"
+    ],
+    "shortDescription": "Ideal Digital Lockers for Home: This sleek Safilo Bio - 2 safety lockers are the perfect digital lockers for home. Measuring (H)555 MM x (W)350 MM x (D)360 MM, this 55 Litre safe easily fits in your home cabinets, cupboards safeguarding your essentials. The safe can be operated through Fingerprint, Password, and a combination of a Fingerprint and User Password. It includes 1 shelf inside that can be easily removed.",
+    "description": "Ideal Digital Lockers for Home: This sleek Safilo Bio - 2 safety lockers are the perfect digital lockers for home. Measuring (H)555 MM x (W)350 MM x (D)360 MM, this 55 Litre safe easily fits in your home cabinets, cupboards safeguarding your essentials. The safe can be operated through Fingerprint, Password, and a combination of a Fingerprint and User Password. It includes 1 shelf inside that can be easily removed.",
+    "rating": 4.8,
+    "reviewCount": 22,
+    "specs": {
+      "Size": "Medium",
+      "Weight": "24.7 Kg",
+      "Dimensions": "Size (Inch) : (H) 21.85 X (W) 13.78 X (D) 14.17",
+      "Color": "Black",
+      "Lock Type": "Biometric Fingerprint + Password"
+    },
+    "features": [
+      "Ideal Digital Lockers for Home: This sleek Safilo Bio - 2 safety lockers are the perfect digital lockers for home. Measuring (H)555 MM x (W)350 MM x (D)360 MM, this 55 Litre safe easily fits in your home cabinets, cupboards safeguarding your essentials. The safe can be operated through Fingerprint, Password, and a combination of a Fingerprint and User Password. It includes 1 shelf inside that can be easily removed."
+    ],
+    "warranty": "2 Years Manufacturer Warranty",
+    "isFeatured": false,
+    "isNewArrival": false,
+    "createdAt": "2026-05-16"
+  }
+];
+
+export const INITIAL_ORDERS: Order[] = [];
