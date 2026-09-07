@@ -43,14 +43,14 @@ export const CATEGORIES = DEFAULT_CATEGORIES;
 
 export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   "storeName": "ASK ENTERPRISES",
-  "whatsappNumber": "919100115604",
-  "displayPhone": "9100115604",
+  "whatsappNumber": "919347548525",
+  "displayPhone": "9347548525",
   "address": "PLOT NO.338, MALLAREDDY NAGAR COLONY, GAJULARAMARAM, HYDERABAD- 500055",
   "supportEmail": "askenterprises0917@gmail.com",
   "announcementText": "⚡ ASK ENTERPRISES • One Stop Solution for all Plumbing, Electricals, Home Appliances & Air Conditioners",
   "freeShippingThreshold": 999,
   "shippingCharge": 79,
-  "upiId": "9100115604ask@axisbank",
+  "upiId": "9347548525@upi",
   "upiName": "ASK ENTERPRISES",
   "themeColor": "monochrome"
 };

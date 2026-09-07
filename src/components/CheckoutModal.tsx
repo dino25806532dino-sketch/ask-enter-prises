@@ -85,7 +85,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         total,
         paymentMethod,
         upiRefNumber: paymentMethod === 'UPI' ? upiRefNumber.trim() || undefined : undefined,
-        status: 'Pending',
+        status: 'Order Received',
         createdAt: new Date().toISOString(),
         notes: [notes.trim(), upiRefNumber.trim() ? `UPI Ref: ${upiRefNumber.trim()}` : ''].filter(Boolean).join(' | ') || undefined,
       };
@@ -102,6 +102,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       }
 
       setIsSubmitting(false);
+      // Reset form fields
+      setName('');
+      setPhone('');
+      setAddress('');
+      setCity('');
+      setPincode('');
+      setNotes('');
+      setUpiRefNumber('');
       onOrderCreated(newOrder);
     }, 600);
   };
@@ -339,17 +347,17 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               type="submit"
               disabled={isSubmitting}
               id="confirm-place-order-btn"
-              className="w-full flex items-center justify-center gap-2 bg-black hover:bg-zinc-800 text-white font-black py-3.5 px-4 rounded-xl text-sm shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 font-black py-3.5 px-4 rounded-xl text-sm shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-yellow-500 disabled:opacity-50"
             >
-              <Zap className="w-4 h-4 fill-current" />
+              <Zap className="w-4 h-4 fill-current text-zinc-950" />
               <span>{isSubmitting ? 'Confirming Order...' : `Place Order • ${formatINR(total)}`}</span>
-              <ArrowRight className="w-4 h-4 ml-auto" />
+              <ArrowRight className="w-4 h-4 ml-auto text-zinc-950" />
             </button>
           </div>
 
           <div className="flex items-center justify-center gap-2 text-[10px] text-zinc-500">
             <Truck className="w-3.5 h-3.5 text-zinc-800" />
-            <span>Delivery Tracking Updates will be sent to your WhatsApp number</span>
+            <span>Order updates & dispatch receipts will be sent to your WhatsApp number</span>
           </div>
 
         </form>

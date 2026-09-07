@@ -38,8 +38,8 @@
       "price": 975,
       "originalPrice": 1850,
       "discountPercent": 47,
-      "stock": 6,
-      "stockStatus": "In Stock",
+      "stock": 5,
+      "stockStatus": "Low Stock",
       "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPKY3XSE_1779712092060_0.jpg?alt=media&token=43de2bfa-25db-4644-be5c-ea39cdfcdcab",
       "images": [
         "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPKY3XSE_1779712092060_0.jpg?alt=media&token=43de2bfa-25db-4644-be5c-ea39cdfcdcab"
@@ -59,7 +59,8 @@
       "warranty": "1 Year Manufacturer Warranty",
       "isFeatured": true,
       "isNewArrival": false,
-      "createdAt": "2026-05-25"
+      "createdAt": "2026-05-25",
+      "updatedAt": "2026-09-04T11:35:11.124Z"
     },
     {
       "id": "P-MPDSDVQ8",
@@ -1053,17 +1054,54 @@
       "description": "Inverter Emergency Bulbs, LED Panels & Smart Lighting"
     }
   ],
-  "orders": [],
+  "orders": [
+    {
+      "id": "ASK-ORD-5207",
+      "customerName": "lasya",
+      "customerPhone": "7780461238",
+      "customerAddress": "borabanda",
+      "customerPincode": "500072",
+      "customerCity": "hyderabad",
+      "items": [
+        {
+          "productId": "P-MPKY3XSE",
+          "productName": "MELTON PLUS CEILING FAN",
+          "price": 975,
+          "quantity": 1,
+          "image": "https://firebasestorage.googleapis.com/v0/b/linkstoreweb.firebasestorage.app/o/products%2FT8lGyFoSKxPSsZGoo2LxVf7dUe53%2FP-MPKY3XSE_1779712092060_0.jpg?alt=media&token=43de2bfa-25db-4644-be5c-ea39cdfcdcab"
+        }
+      ],
+      "subtotal": 975,
+      "discount": 0,
+      "shipping": 79,
+      "total": 1054,
+      "paymentMethod": "UPI",
+      "status": "Pending",
+      "createdAt": "2026-09-04T11:35:08.410Z",
+      "updatedAt": "2026-09-04T11:35:09.884Z",
+      "statusHistory": [
+        {
+          "status": "Confirmed",
+          "timestamp": "2026-09-04T11:35:09.884Z",
+          "note": "Order received and confirmed successfully.",
+          "updatedBy": "System"
+        }
+      ],
+      "courierName": "",
+      "trackingNumber": "",
+      "estimatedDelivery": ""
+    }
+  ],
   "settings": {
     "storeName": "ASK ENTERPRISES",
-    "whatsappNumber": "919100115604",
-    "displayPhone": "9100115604",
+    "whatsappNumber": "919347548525",
+    "displayPhone": "9347548525",
     "address": "PLOT NO.338, MALLAREDDY NAGAR COLONY, GAJULARAMARAM, HYDERABAD- 500055",
     "supportEmail": "askenterprises0917@gmail.com",
     "announcementText": "⚡ ASK ENTERPRISES • One Stop Solution for all Plumbing, Electricals, Home Appliances & Air Conditioners",
     "freeShippingThreshold": 999,
     "shippingCharge": 79,
-    "upiId": "9100115604ask@axisbank",
+    "upiId": "9347548525@upi",
     "upiName": "ASK ENTERPRISES",
     "themeColor": "monochrome"
   },

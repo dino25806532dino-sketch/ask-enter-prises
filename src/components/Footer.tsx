@@ -7,8 +7,7 @@ import {
   ShieldCheck, 
   Truck, 
   Lock,
-  QrCode,
-  Package
+  QrCode
 } from 'lucide-react';
 import { ProductCategory, StoreSettings, Category } from '../types';
 import { CATEGORIES } from '../data/initialProducts';
@@ -19,7 +18,6 @@ interface FooterProps {
   onOpenAdminLogin: () => void;
   isAdminLoggedIn: boolean;
   onOpenUpiModal?: () => void;
-  onOpenTrackingModal?: () => void;
   categories?: Category[];
 }
 
@@ -29,7 +27,6 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenAdminLogin,
   isAdminLoggedIn,
   onOpenUpiModal,
-  onOpenTrackingModal,
   categories,
 }) => {
   const displayCategories = categories && categories.length > 0 ? categories : CATEGORIES;
@@ -155,16 +152,6 @@ export const Footer: React.FC<FooterProps> = ({
             </p>
 
             <div className="flex flex-col gap-2">
-              {onOpenTrackingModal && (
-                <button
-                  onClick={onOpenTrackingModal}
-                  className="inline-flex items-center gap-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 px-4 py-2 rounded-xl font-bold transition-all border border-zinc-300 shadow-sm text-xs"
-                >
-                  <Package className="w-4 h-4 text-zinc-900" />
-                  <span>Live Order Tracking</span>
-                </button>
-              )}
-
               {onOpenUpiModal && (
                 <button
                   onClick={onOpenUpiModal}

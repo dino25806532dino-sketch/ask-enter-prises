@@ -5,8 +5,7 @@ import {
   MessageCircle, 
   Copy, 
   PackageCheck,
-  QrCode,
-  Truck
+  QrCode
 } from 'lucide-react';
 import { Order, StoreSettings } from '../types';
 import { formatINR } from '../utils/helpers';
@@ -15,15 +14,15 @@ import { UpiPaymentBox } from './UpiPaymentBox';
 interface OrderSuccessModalProps {
   order: Order | null;
   onClose: () => void;
+  onViewOrders?: () => void;
   storeSettings: StoreSettings;
-  onTrackOrder?: (orderId: string) => void;
 }
 
 export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
   order,
   onClose,
+  onViewOrders,
   storeSettings,
-  onTrackOrder,
 }) => {
   if (!order) return null;
 
@@ -67,7 +66,7 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
           </div>
 
           <h3 className="text-xl sm:text-2xl font-black text-zinc-900">
-            Order Placed Successfully!
+            Order Confirmed Successfully!
           </h3>
           <p className="text-xs text-zinc-500 mt-1">
             Thank you for shopping at ASK ENTERPRISES
@@ -95,8 +94,9 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
 
             <div className="text-right">
               <span className="text-[10px] uppercase font-bold text-zinc-500 block">Status</span>
-              <span className="inline-block bg-zinc-200 text-zinc-900 border border-zinc-300 text-xs font-bold px-2.5 py-0.5 rounded-full mt-0.5">
-                {order.status}
+              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bold px-2.5 py-0.5 rounded-full mt-0.5">
+                <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                {order.status || 'Confirmed'}
               </span>
             </div>
           </div>
@@ -176,15 +176,16 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
             </div>
           </div>
 
-          {/* WhatsApp Confirmation Action Button */}
+          {/* Actions */}
           <div className="space-y-2 pt-2">
-            {onTrackOrder && (
+            {onViewOrders && (
               <button
-                onClick={() => onTrackOrder(order.id)}
-                className="w-full flex items-center justify-center gap-2 bg-black hover:bg-zinc-800 text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm shadow-sm transition-all"
+                onClick={onViewOrders}
+                id="view-orders-after-confirm-btn"
+                className="w-full flex items-center justify-center gap-2 bg-black hover:bg-zinc-800 text-white font-black py-3 px-4 rounded-xl text-xs sm:text-sm shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
-                <Truck className="w-4 h-4 text-white" />
-                <span>Track Live Order Status</span>
+                <PackageCheck className="w-4 h-4 text-white" />
+                <span>View in Cart / My Orders</span>
               </button>
             )}
 
@@ -192,7 +193,7 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 font-bold py-3 px-4 rounded-xl text-xs sm:text-sm border border-zinc-300 shadow-xs transition-all"
+              className="w-full flex items-center justify-center gap-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm border border-zinc-300 shadow-xs transition-all"
             >
               <MessageCircle className="w-4 h-4 text-zinc-900" />
               <span>Send Order & Payment Proof on WhatsApp</span>
@@ -200,7 +201,7 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
 
             <button
               onClick={onClose}
-              className="w-full bg-white hover:bg-zinc-100 text-zinc-700 font-bold py-2.5 px-4 rounded-xl text-xs border border-zinc-300 transition-colors shadow-xs"
+              className="w-full bg-white hover:bg-zinc-100 text-zinc-600 font-bold py-2.5 px-4 rounded-xl text-xs border border-zinc-300 transition-colors shadow-xs"
             >
               Continue Shopping
             </button>

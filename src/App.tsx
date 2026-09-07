@@ -46,9 +46,6 @@ import {
 import { 
   UpiQrModal 
 } from './components/UpiQrModal';
-import { 
-  OrderTrackingModal 
-} from './components/OrderTrackingModal';
 
 import { 
   Product, 
@@ -98,6 +95,17 @@ export default function App() {
     }
   });
 
+  // Customer's confirmed orders (persisted locally & synced with backend database)
+  const [customerOrders, setCustomerOrders] = useState<Order[]>(() => {
+    try {
+      const saved = localStorage.getItem('ask_customer_orders');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      return [];
+    }
+    return [];
+  });
+
   // Admin Auth state
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
     try {
@@ -116,10 +124,9 @@ export default function App() {
   // Modals state
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartDrawerTab, setCartDrawerTab] = useState<'cart' | 'orders'>('cart');
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isUpiModalOpen, setIsUpiModalOpen] = useState(false);
-  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
-  const [trackingOrderId, setTrackingOrderId] = useState<string | undefined>(undefined);
   const [lastPlacedOrder, setLastPlacedOrder] = useState<Order | null>(null);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
@@ -154,6 +161,21 @@ export default function App() {
       if (fetchedSettings) {
         setStoreSettings(fetchedSettings);
       }
+
+      // Sync customer orders with backend updates without duplicating
+      if (fetchedOrders && fetchedOrders.length > 0) {
+        setCustomerOrders((prev) => {
+          if (!prev || prev.length === 0) return prev;
+          const updated = prev.map((localOrder) => {
+            const serverMatch = fetchedOrders.find((fo) => fo.id === localOrder.id);
+            return serverMatch ? serverMatch : localOrder;
+          });
+          try {
+            localStorage.setItem('ask_customer_orders', JSON.stringify(updated));
+          } catch (e) {}
+          return updated;
+        });
+      }
     } catch (err: any) {
       console.warn('Backend API connection notice:', err);
     } finally {
@@ -164,6 +186,41 @@ export default function App() {
   useEffect(() => {
     loadInitialData();
   }, [loadInitialData]);
+
+  // Periodic background order sync to ensure real-time updates for new orders and admin messages
+  useEffect(() => {
+    const syncInterval = setInterval(async () => {
+      try {
+        const fetchedOrders = await api.getOrders();
+        if (Array.isArray(fetchedOrders)) {
+          setOrders(fetchedOrders);
+          setCustomerOrders((prev) => {
+            if (!prev || prev.length === 0) return prev;
+            let changed = false;
+            const updated = prev.map((localOrder) => {
+              const match = fetchedOrders.find((fo) => fo.id === localOrder.id);
+              if (match && JSON.stringify(match) !== JSON.stringify(localOrder)) {
+                changed = true;
+                return match;
+              }
+              return localOrder;
+            });
+            if (changed) {
+              try {
+                localStorage.setItem('ask_customer_orders', JSON.stringify(updated));
+              } catch (e) {}
+              return updated;
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        // silent catch for background polling
+      }
+    }, 3000);
+
+    return () => clearInterval(syncInterval);
+  }, []);
 
   // Persist cart
   useEffect(() => {
@@ -262,17 +319,33 @@ export default function App() {
 
   // Order Placement
   const handleOrderCreated = async (newOrder: Order) => {
+    let savedOrder = newOrder;
     try {
-      const savedOrder = await api.createOrder(newOrder);
-      setOrders((prev) => [savedOrder, ...prev]);
+      savedOrder = await api.createOrder(newOrder);
     } catch (e) {
-      setOrders((prev) => [newOrder, ...prev]);
+      console.warn('Backend createOrder fallback:', e);
     }
+
+    // Add to all store orders (deduplicating by ID)
+    setOrders((prev) => {
+      if (prev.some((o) => o.id === savedOrder.id)) return prev;
+      return [savedOrder, ...prev];
+    });
+
+    // Automatically add that confirmed order to the customer's Cart / My Orders section
+    setCustomerOrders((prev) => {
+      const filtered = prev.filter((o) => o.id !== savedOrder.id);
+      const updated = [savedOrder, ...filtered];
+      try {
+        localStorage.setItem('ask_customer_orders', JSON.stringify(updated));
+      } catch (err) {}
+      return updated;
+    });
 
     // Deduct stock locally & via API
     setProducts((prev) =>
       prev.map((p) => {
-        const orderedItem = newOrder.items.find((i) => i.productId === p.id);
+        const orderedItem = savedOrder.items.find((i) => i.productId === p.id);
         if (orderedItem) {
           const newStock = Math.max(0, p.stock - orderedItem.quantity);
           api.updateStock(p.id, newStock).catch(() => {});
@@ -282,10 +355,12 @@ export default function App() {
       })
     );
 
+    // Clear active checkout cart items
     setCart([]);
     setIsCheckoutOpen(false);
-    setLastPlacedOrder(newOrder);
-    showToast(`Order placed successfully! Order ID: ${newOrder.id}`);
+    setLastPlacedOrder(savedOrder);
+    setCartDrawerTab('orders');
+    showToast('Order Confirmed Successfully!');
   };
 
   // Admin Actions
@@ -394,9 +469,36 @@ export default function App() {
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? updated : o))
       );
-      showToast(`Order status updated to ${status}.`);
+      setCustomerOrders((prev) => {
+        const updatedOrders = prev.map((o) => (o.id === orderId ? updated : o));
+        try {
+          localStorage.setItem('ask_customer_orders', JSON.stringify(updatedOrders));
+        } catch (e) {}
+        return updatedOrders;
+      });
+      showToast(`Order status updated to "${status}".`);
     } catch (err) {
       showToast('Failed to update order status.');
+    }
+  };
+
+  // Send Order Message from Admin to Customer
+  const handleSendOrderMessage = async (orderId: string, message: string) => {
+    try {
+      const updated = await api.sendOrderMessage(orderId, message);
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, ...updated } : o))
+      );
+      setCustomerOrders((prev) => {
+        const updatedOrders = prev.map((o) => (o.id === orderId ? { ...o, ...updated } : o));
+        try {
+          localStorage.setItem('ask_customer_orders', JSON.stringify(updatedOrders));
+        } catch (e) {}
+        return updatedOrders;
+      });
+      showToast('Message sent to customer!');
+    } catch (err) {
+      showToast('Failed to send message.');
     }
   };
 
@@ -440,7 +542,15 @@ export default function App() {
       <Header
         cartCount={cartCount}
         cartTotal={cartTotal}
-        onOpenCart={() => setIsCartOpen(true)}
+        ordersCount={customerOrders.length}
+        onOpenCart={() => {
+          setCartDrawerTab('cart');
+          setIsCartOpen(true);
+        }}
+        onOpenOrders={() => {
+          setCartDrawerTab('orders');
+          setIsCartOpen(true);
+        }}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         selectedCategory={selectedCategory}
@@ -451,11 +561,13 @@ export default function App() {
         activeView={activeView}
         onNavigate={(view) => {
           setActiveView(view);
+          if (view === 'admin') setIsCartOpen(false);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         isAdminLoggedIn={isAdminLoggedIn}
         onOpenAdminLogin={() => {
           if (isAdminLoggedIn) {
+            setIsCartOpen(false);
             setActiveView('admin');
           } else {
             setIsAdminLoginOpen(true);
@@ -463,7 +575,6 @@ export default function App() {
         }}
         storeSettings={storeSettings}
         onOpenUpiModal={() => setIsUpiModalOpen(true)}
-        onOpenTrackingModal={() => setIsTrackingModalOpen(true)}
       />
 
       {/* ADMIN VIEW */}
@@ -486,6 +597,7 @@ export default function App() {
           onAddCategory={handleAddCategory}
           onDeleteCategory={handleDeleteCategory}
           onUpdateOrderStatus={handleUpdateOrderStatus}
+          onSendOrderMessage={handleSendOrderMessage}
           onLogout={handleAdminLogout}
           onBackToStore={() => setActiveView('store')}
           storeSettings={storeSettings}
@@ -700,7 +812,6 @@ export default function App() {
         }}
         isAdminLoggedIn={isAdminLoggedIn}
         onOpenUpiModal={() => setIsUpiModalOpen(true)}
-        onOpenTrackingModal={() => setIsTrackingModalOpen(true)}
       />
 
       {/* MODALS */}
@@ -720,11 +831,14 @@ export default function App() {
         isInCart={selectedProduct ? cart.some((i) => i.product.id === selectedProduct.id) : false}
       />
 
-      {/* 2. Cart Drawer */}
+      {/* 2. Cart Drawer & My Orders */}
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         items={cart}
+        customerOrders={customerOrders}
+        activeTab={cartDrawerTab}
+        onTabChange={(tab) => setCartDrawerTab(tab)}
         onUpdateQuantity={handleUpdateCartQuantity}
         onRemoveItem={handleRemoveCartItem}
         onClearCart={handleClearCart}
@@ -748,26 +862,15 @@ export default function App() {
       <OrderSuccessModal
         order={lastPlacedOrder}
         onClose={() => setLastPlacedOrder(null)}
-        storeSettings={storeSettings}
-        onTrackOrder={(orderId) => {
+        onViewOrders={() => {
           setLastPlacedOrder(null);
-          setTrackingOrderId(orderId);
-          setIsTrackingModalOpen(true);
+          setCartDrawerTab('orders');
+          setIsCartOpen(true);
         }}
-      />
-
-      {/* 5. Customer Order Tracking Modal */}
-      <OrderTrackingModal
-        isOpen={isTrackingModalOpen}
-        onClose={() => {
-          setIsTrackingModalOpen(false);
-          setTrackingOrderId(undefined);
-        }}
-        initialOrderId={trackingOrderId}
         storeSettings={storeSettings}
       />
 
-      {/* 6. Direct UPI QR Code Scanner Modal */}
+      {/* 5. Direct UPI QR Code Scanner Modal */}
       <UpiQrModal
         isOpen={isUpiModalOpen}
         onClose={() => setIsUpiModalOpen(false)}

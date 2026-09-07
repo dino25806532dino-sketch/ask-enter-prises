@@ -50,3 +50,20 @@ export const generateWhatsAppProductInquiryUrl = (product: Product, settings: St
   const text = `Hi ASK ENTERPRISES! 👋\n\nI am interested in buying:\n⚡ *${product.name}*\n🏷️ Price: *${formatINR(product.price)}* (Category: ${product.category})\n\nIs this available in stock? Please share delivery details to my location.`;
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
 };
+
+export const formatOrderDate = (dateString?: string): string => {
+  if (!dateString) return 'Recent';
+  try {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    return d.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return dateString;
+  }
+};

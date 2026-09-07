@@ -182,34 +182,6 @@ export const api = {
     return null;
   },
 
-  async trackOrder(query: string): Promise<{ order: Order; allMatching: Order[] } | null> {
-    try {
-      const res = await fetch(`/api/orders/track/${encodeURIComponent(query.trim())}`);
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch (e) {
-      console.warn('API track order failed, checking local state', e);
-    }
-    
-    // Client fallback search
-    const local = localStorage.getItem('ask_orders');
-    if (local) {
-      const orders: Order[] = JSON.parse(local);
-      const cleanQ = query.trim().toLowerCase();
-      const cleanPhone = cleanQ.replace(/\D/g, '');
-      const matches = orders.filter(
-        (o) =>
-          o.id?.toLowerCase().includes(cleanQ) ||
-          (cleanPhone.length >= 5 && o.customerPhone?.replace(/\D/g, '').includes(cleanPhone))
-      );
-      if (matches.length > 0) {
-        return { order: matches[0], allMatching: matches };
-      }
-    }
-    return null;
-  },
-
   async createOrder(order: Partial<Order>): Promise<Order> {
     try {
       const res = await fetch('/api/orders', {
@@ -242,7 +214,7 @@ export const api = {
   async updateOrderStatus(
     orderId: string, 
     status: OrderStatus, 
-    updateData?: { note?: string; courierName?: string; trackingNumber?: string; estimatedDelivery?: string; updatedBy?: string }
+    updateData?: { note?: string; courierName?: string; trackingNumber?: string; estimatedDelivery?: string; updatedBy?: string; adminMessage?: string }
   ): Promise<Order> {
     try {
       const res = await fetch(`/api/orders/${orderId}/status`, {
@@ -257,6 +229,34 @@ export const api = {
     return {
       id: orderId,
       status,
+      ...(updateData || {}),
+    } as any;
+  },
+
+  async sendOrderMessage(orderId: string, message: string): Promise<Order> {
+    try {
+      const res = await fetch(`/api/orders/${orderId}/message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, sender: 'admin' }),
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('API send order message failed', e);
+    }
+    const now = new Date().toISOString();
+    return {
+      id: orderId,
+      adminMessage: message,
+      adminMessageTimestamp: now,
+      messages: [
+        {
+          id: `msg_${Date.now()}`,
+          sender: 'admin',
+          message,
+          timestamp: now,
+        },
+      ],
     } as any;
   },
 

@@ -42,7 +42,17 @@ export interface CartItem {
   quantity: number;
 }
 
-export type OrderStatus = 'Pending' | 'Confirmed' | 'Packed' | 'Dispatched' | 'Delivered' | 'Cancelled';
+export type OrderStatus = 
+  | 'Order Received' 
+  | 'Confirmed' 
+  | 'Ready to Deliver' 
+  | 'Delivered' 
+  | 'Delayed'
+  | 'Pending' 
+  | 'Packed' 
+  | 'Dispatched' 
+  | 'Cancelled' 
+  | string;
 
 export interface OrderStatusHistoryItem {
   status: OrderStatus;
@@ -50,6 +60,13 @@ export interface OrderStatusHistoryItem {
   note?: string;
   updatedBy?: string;
   location?: string;
+}
+
+export interface OrderMessage {
+  id: string;
+  sender: 'admin' | 'customer' | 'system';
+  message: string;
+  timestamp: string;
 }
 
 export interface Order {
@@ -74,6 +91,9 @@ export interface Order {
   upiRefNumber?: string;
   status: OrderStatus;
   statusHistory?: OrderStatusHistoryItem[];
+  adminMessage?: string;
+  adminMessageTimestamp?: string;
+  messages?: OrderMessage[];
   courierName?: string;
   trackingNumber?: string;
   estimatedDelivery?: string;

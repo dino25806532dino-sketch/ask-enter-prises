@@ -31,14 +31,14 @@ const DEFAULT_CATEGORIES = [
 
 const DEFAULT_SETTINGS = {
   storeName: 'ASK ENTERPRISES',
-  whatsappNumber: '919100115604',
-  displayPhone: '9100115604',
+  whatsappNumber: '919347548525',
+  displayPhone: '9347548525',
   address: 'PLOT NO.338, MALLAREDDY NAGAR COLONY, GAJULARAMARAM, HYDERABAD- 500055',
   supportEmail: 'askenterprises0917@gmail.com',
   announcementText: '⚡ ASK ENTERPRISES • One Stop Solution for all Plumbing, Electricals, Home Appliances & Air Conditioners',
   freeShippingThreshold: 999,
   shippingCharge: 79,
-  upiId: '9100115604ask@axisbank',
+  upiId: '9347548525@upi',
   upiName: 'ASK ENTERPRISES',
   themeColor: 'monochrome',
 };
@@ -282,8 +282,16 @@ async function startServer() {
       return res.status(400).json({ error: 'Order must contain items' });
     }
 
+    // Prevent duplicate orders on network retries or page reloads
+    if (orderData.id) {
+      const existingOrder = db.orders.find((o) => o.id === orderData.id);
+      if (existingOrder) {
+        return res.status(200).json(existingOrder);
+      }
+    }
+
     const now = new Date().toISOString();
-    const initialStatus = orderData.status || 'Confirmed';
+    const initialStatus = orderData.status || 'Order Received';
 
     const newOrder = {
       ...orderData,
@@ -293,12 +301,15 @@ async function startServer() {
       status: initialStatus,
       statusHistory: orderData.statusHistory || [
         {
-          status: 'Confirmed',
+          status: initialStatus,
           timestamp: now,
-          note: 'Order received and confirmed successfully.',
+          note: initialStatus === 'Order Received' ? 'Order placed and received by store.' : 'Order received and confirmed successfully.',
           updatedBy: 'System',
         },
       ],
+      adminMessage: orderData.adminMessage || '',
+      adminMessageTimestamp: orderData.adminMessageTimestamp || '',
+      messages: Array.isArray(orderData.messages) ? orderData.messages : [],
       courierName: orderData.courierName || '',
       trackingNumber: orderData.trackingNumber || '',
       estimatedDelivery: orderData.estimatedDelivery || '',
@@ -322,10 +333,52 @@ async function startServer() {
     res.status(201).json(newOrder);
   });
 
+  // Add a message from Admin to a specific Order
+  app.post('/api/orders/:id/message', (req, res) => {
+    const db = readDatabase();
+    const orderId = req.params.id;
+    const { message, sender = 'admin' } = req.body;
+
+    if (!message || typeof message !== 'string' || !message.trim()) {
+      return res.status(400).json({ error: 'Message content is required.' });
+    }
+
+    const index = db.orders.findIndex((o) => o.id === orderId);
+    if (index === -1) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    const now = new Date().toISOString();
+    const currentOrder = db.orders[index];
+    const messages = Array.isArray(currentOrder.messages) ? [...currentOrder.messages] : [];
+
+    const newMessage = {
+      id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+      sender: sender || 'admin',
+      message: message.trim(),
+      timestamp: now,
+    };
+
+    // Newest message first
+    messages.unshift(newMessage);
+
+    const updatedOrder = {
+      ...currentOrder,
+      adminMessage: message.trim(),
+      adminMessageTimestamp: now,
+      messages,
+      updatedAt: now,
+    };
+
+    db.orders[index] = updatedOrder;
+    writeDatabase(db);
+    res.json(updatedOrder);
+  });
+
   app.put('/api/orders/:id/status', (req, res) => {
     const db = readDatabase();
     const orderId = req.params.id;
-    const { status, note, courierName, trackingNumber, estimatedDelivery, updatedBy } = req.body;
+    const { status, note, courierName, trackingNumber, estimatedDelivery, updatedBy, adminMessage } = req.body;
 
     const index = db.orders.findIndex((o) => o.id === orderId);
     if (index === -1) {
@@ -335,15 +388,19 @@ async function startServer() {
     const now = new Date().toISOString();
     const currentOrder = db.orders[index];
     const history = Array.isArray(currentOrder.statusHistory) ? [...currentOrder.statusHistory] : [];
+    const messages = Array.isArray(currentOrder.messages) ? [...currentOrder.messages] : [];
 
     const defaultNotes: Record<string, string> = {
+      'Order Received': 'Order received by store and pending confirmation.',
       Pending: 'Order is awaiting initial review.',
       Confirmed: 'Order verified and confirmed for processing.',
+      'Ready to Deliver': 'Order packaged and ready for dispatch.',
       Packed: 'Products inspected, packed, and packaged in secure parcel box.',
       Dispatched: courierName
         ? `Handed over to carrier ${courierName}${trackingNumber ? ` (AWB: ${trackingNumber})` : ''}. In transit.`
         : 'Dispatched and on the way to destination.',
       Delivered: 'Package successfully delivered to customer address.',
+      Delayed: 'Order delayed in transit/processing.',
       Cancelled: 'Order cancelled.',
     };
 
@@ -357,10 +414,37 @@ async function startServer() {
 
     history.push(newHistoryItem);
 
+    let updatedAdminMsg = currentOrder.adminMessage;
+    let updatedAdminMsgTs = currentOrder.adminMessageTimestamp;
+
+    if (adminMessage && typeof adminMessage === 'string' && adminMessage.trim()) {
+      updatedAdminMsg = adminMessage.trim();
+      updatedAdminMsgTs = now;
+      messages.unshift({
+        id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+        sender: 'admin',
+        message: adminMessage.trim(),
+        timestamp: now,
+      });
+    } else if (status === 'Delayed') {
+      const delayText = 'Your order has been delayed. We will update you soon.';
+      updatedAdminMsg = delayText;
+      updatedAdminMsgTs = now;
+      messages.unshift({
+        id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+        sender: 'admin',
+        message: delayText,
+        timestamp: now,
+      });
+    }
+
     const updatedOrder = {
       ...currentOrder,
       status: status || currentOrder.status,
       statusHistory: history,
+      adminMessage: updatedAdminMsg,
+      adminMessageTimestamp: updatedAdminMsgTs,
+      messages,
       courierName: courierName !== undefined ? courierName : currentOrder.courierName,
       trackingNumber: trackingNumber !== undefined ? trackingNumber : currentOrder.trackingNumber,
       estimatedDelivery: estimatedDelivery !== undefined ? estimatedDelivery : currentOrder.estimatedDelivery,

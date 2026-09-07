@@ -44,8 +44,9 @@ interface AdminDashboardProps {
   onUpdateOrderStatus: (
     orderId: string, 
     status: OrderStatus, 
-    updateData?: { note?: string; courierName?: string; trackingNumber?: string; estimatedDelivery?: string }
+    updateData?: { note?: string; courierName?: string; trackingNumber?: string; estimatedDelivery?: string; adminMessage?: string }
   ) => void;
+  onSendOrderMessage?: (orderId: string, message: string) => Promise<void> | void;
   onLogout: () => void;
   onBackToStore: () => void;
   storeSettings: StoreSettings;
@@ -64,6 +65,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onAddCategory,
   onDeleteCategory,
   onUpdateOrderStatus,
+  onSendOrderMessage,
   onLogout,
   onBackToStore,
   storeSettings,
@@ -75,13 +77,51 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>('All');
   const [orderSearch, setOrderSearch] = useState<string>('');
   
-  // Order Status Update Modal State
-  const [statusModalOrder, setStatusModalOrder] = useState<Order | null>(null);
-  const [newStatus, setNewStatus] = useState<OrderStatus>('Confirmed');
-  const [statusNote, setStatusNote] = useState<string>('');
-  const [courierName, setCourierName] = useState<string>('');
-  const [trackingNumber, setTrackingNumber] = useState<string>('');
-  const [estimatedDelivery, setEstimatedDelivery] = useState<string>('');
+  // WhatsApp Customer message editing state per order
+  const [editedWhatsAppMessages, setEditedWhatsAppMessages] = useState<Record<string, string>>({});
+  const [openWhatsAppEditBoxes, setOpenWhatsAppEditBoxes] = useState<Record<string, boolean>>({});
+
+  // Helper to format Indian customer phone number for WhatsApp link
+  const formatWhatsAppCustomerPhone = (phone: string): string => {
+    let cleaned = phone.replace(/\D/g, '');
+    if (cleaned.startsWith('0')) {
+      cleaned = cleaned.substring(1);
+    }
+    if (cleaned.length === 10) {
+      return `91${cleaned}`;
+    }
+    return cleaned;
+  };
+
+  // Prepares the exact requested WhatsApp message template for a customer order
+  const generateDefaultOrderWhatsAppMessage = (ord: Order): string => {
+    const productSummary = ord.items
+      .map((item) => (ord.items.length > 1 ? `• ${item.productName} (Qty: ${item.quantity})` : item.productName))
+      .join('\n');
+    const totalQuantity = ord.items.reduce((sum, item) => sum + item.quantity, 0);
+
+    return `Hello ${ord.customerName},
+
+Regarding your Ask Enterprises order:
+
+Order ID: #${ord.id}
+Product: ${ord.items.length === 1 ? ord.items[0].productName : '\n' + productSummary}
+Quantity: ${totalQuantity}
+Total Amount: ${formatINR(ord.total)}
+
+Your order is currently: ${ord.status}
+
+Expected delivery: Within 7 days.
+
+Thank you for choosing Ask Enterprises.`;
+  };
+
+  const getOrderWhatsAppMessage = (ord: Order): string => {
+    if (editedWhatsAppMessages[ord.id] !== undefined) {
+      return editedWhatsAppMessages[ord.id];
+    }
+    return generateDefaultOrderWhatsAppMessage(ord);
+  };
   
   // Quick inline edits
   const [editingStockId, setEditingStockId] = useState<string | null>(null);
@@ -143,18 +183,66 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
-      case 'Pending':
-        return <span className="bg-zinc-100 text-zinc-800 border border-zinc-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1"><Clock className="w-3 h-3 text-zinc-800" /> Pending</span>;
+      case 'Order Received':
+        return (
+          <span className="bg-zinc-100 text-zinc-900 border border-zinc-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-2xs">
+            <Clock className="w-3 h-3 text-zinc-700" /> Order Received
+          </span>
+        );
       case 'Confirmed':
-        return <span className="bg-black text-white border border-black text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1"><Check className="w-3 h-3 text-white" /> Confirmed</span>;
-      case 'Packed':
-        return <span className="bg-amber-50 text-amber-800 border border-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1"><Box className="w-3 h-3 text-amber-800" /> Packed</span>;
-      case 'Dispatched':
-        return <span className="bg-blue-50 text-blue-800 border border-blue-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1"><Truck className="w-3 h-3 text-blue-800" /> Dispatched</span>;
+        return (
+          <span className="bg-black text-white border border-black text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-2xs">
+            <Check className="w-3 h-3 text-white" /> Confirmed
+          </span>
+        );
+      case 'Ready to Deliver':
+        return (
+          <span className="bg-blue-50 text-blue-900 border border-blue-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-2xs">
+            <Truck className="w-3 h-3 text-blue-700" /> Ready to Deliver
+          </span>
+        );
       case 'Delivered':
-        return <span className="bg-emerald-50 text-emerald-800 border border-emerald-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-emerald-800" /> Delivered</span>;
+        return (
+          <span className="bg-emerald-50 text-emerald-900 border border-emerald-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-2xs">
+            <CheckCircle2 className="w-3 h-3 text-emerald-700" /> Delivered
+          </span>
+        );
+      case 'Delayed':
+        return (
+          <span className="bg-amber-50 text-amber-900 border border-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-2xs">
+            <AlertTriangle className="w-3 h-3 text-amber-700" /> Delayed
+          </span>
+        );
+      case 'Pending':
+        return (
+          <span className="bg-zinc-100 text-zinc-800 border border-zinc-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+            <Clock className="w-3 h-3 text-zinc-800" /> Pending
+          </span>
+        );
+      case 'Packed':
+        return (
+          <span className="bg-amber-50 text-amber-800 border border-amber-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+            <Box className="w-3 h-3 text-amber-800" /> Packed
+          </span>
+        );
+      case 'Dispatched':
+        return (
+          <span className="bg-blue-50 text-blue-800 border border-blue-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+            <Truck className="w-3 h-3 text-blue-800" /> Dispatched
+          </span>
+        );
       case 'Cancelled':
-        return <span className="bg-red-50 text-red-800 border border-red-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1"><XCircle className="w-3 h-3 text-red-800" /> Cancelled</span>;
+        return (
+          <span className="bg-red-50 text-red-800 border border-red-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+            <XCircle className="w-3 h-3 text-red-800" /> Cancelled
+          </span>
+        );
+      default:
+        return (
+          <span className="bg-zinc-100 text-zinc-900 border border-zinc-300 text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+            {status}
+          </span>
+        );
     }
   };
 
@@ -325,6 +413,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
           <button
             onClick={() => setActiveTab('orders')}
+            id="admin-tab-orders"
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'orders'
                 ? 'bg-black text-white shadow-sm'
@@ -332,7 +421,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             }`}
           >
             <ShoppingBag className="w-4 h-4" />
-            <span>Orders ({orders.length})</span>
+            <span>
+              My Orders {orders.filter((o) => o.status === 'Order Received').length > 0 ? (
+                <span className="inline-flex items-center gap-1 ml-1 text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full font-bold">
+                  🔴 {orders.filter((o) => o.status === 'Order Received').length} New {orders.filter((o) => o.status === 'Order Received').length === 1 ? 'Order' : 'Orders'}
+                </span>
+              ) : (
+                `(${orders.length})`
+              )}
+            </span>
           </button>
 
           <button
@@ -776,7 +873,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
 
-        {/* TAB 3: CUSTOMER ORDERS & TRACKING */}
+        {/* TAB 3: MY ORDERS */}
         {activeTab === 'orders' && (
           <div className="space-y-4">
             
@@ -785,23 +882,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="font-bold text-zinc-900 text-sm sm:text-base flex items-center gap-2">
-                    <span>Order Tracking & Fulfillment</span>
-                    <span className="text-[10px] bg-zinc-200 text-zinc-800 px-2 py-0.5 rounded-full border border-zinc-300 font-mono">
+                    <ShoppingBag className="w-4 h-4 text-zinc-900" />
+                    <span>My Orders</span>
+                    <span className="text-[10px] bg-zinc-200 text-zinc-800 px-2 py-0.5 rounded-full border border-zinc-300 font-mono font-bold">
                       {orders.length} Total
                     </span>
                   </h3>
                   <p className="text-xs text-zinc-500">
-                    Update lifecycle status (Confirmed ➔ Packed ➔ Dispatched ➔ Delivered) with courier tracking & timestamps.
+                    All customer orders placed across the store with quick status controls.
                   </p>
                 </div>
 
-                <div className="relative w-full sm:w-64">
+                <div className="relative w-full sm:w-72">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
                   <input
                     type="text"
                     value={orderSearch}
                     onChange={(e) => setOrderSearch(e.target.value)}
-                    placeholder="Search Order ID, Phone or Name..."
+                    placeholder="Search by Customer Name, Phone, or Order ID..."
                     className="w-full bg-white border border-zinc-300 rounded-xl pl-9 pr-3 py-2 text-xs text-zinc-900 placeholder-zinc-400 focus:border-zinc-800 focus:outline-none"
                   />
                 </div>
@@ -809,23 +907,29 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               {/* Status Filter Tabs */}
               <div className="flex items-center gap-2 overflow-x-auto pt-2 border-t border-zinc-200 pb-1">
-                {['All', 'Confirmed', 'Packed', 'Dispatched', 'Delivered', 'Pending', 'Cancelled'].map((st) => {
+                {['All', 'Order Received', 'Confirmed', 'Ready to Deliver', 'Delivered', 'Delayed'].map((st) => {
                   const count = st === 'All' 
                     ? orders.length 
                     : orders.filter((o) => o.status === st).length;
+                  const isNewReceived = st === 'Order Received' && count > 0;
                   return (
                     <button
                       key={st}
                       onClick={() => setOrderStatusFilter(st)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
                         orderStatusFilter === st
                           ? 'bg-black text-white shadow-sm'
                           : 'bg-white text-zinc-700 hover:text-black border border-zinc-300'
                       }`}
                     >
+                      {isNewReceived && <span>🔴</span>}
                       <span>{st}</span>
                       <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
-                        orderStatusFilter === st ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-600'
+                        orderStatusFilter === st 
+                          ? 'bg-zinc-800 text-white' 
+                          : isNewReceived
+                          ? 'bg-red-100 text-red-700 font-bold'
+                          : 'bg-zinc-100 text-zinc-600'
                       }`}>
                         {count}
                       </span>
@@ -835,8 +939,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
 
+            {/* Notification Alert Banner for New Orders */}
+            {orders.filter((o) => o.status === 'Order Received').length > 0 && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs shadow-2xs">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-base animate-pulse">🔴</span>
+                  <div>
+                    <span className="font-bold text-red-950 block">
+                      {orders.filter((o) => o.status === 'Order Received').length} New Customer {orders.filter((o) => o.status === 'Order Received').length === 1 ? 'Order' : 'Orders'} Awaiting Review
+                    </span>
+                    <span className="text-red-700 text-[11px]">
+                      New customer orders automatically appear here. Review details, message the customer, and update order status.
+                    </span>
+                  </div>
+                </div>
+
+                {orderStatusFilter !== 'Order Received' && (
+                  <button
+                    onClick={() => setOrderStatusFilter('Order Received')}
+                    className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition-colors shadow-xs cursor-pointer"
+                  >
+                    View New Orders Only
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Orders List */}
-            <div className="space-y-4">
+            <div className="space-y-4" id="admin-orders-list">
               {(() => {
                 const filteredOrders = orders.filter((ord) => {
                   const matchStatus = orderStatusFilter === 'All' || ord.status === orderStatusFilter;
@@ -851,170 +981,280 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 if (filteredOrders.length === 0) {
                   return (
                     <div className="bg-zinc-50 p-12 rounded-2xl border border-zinc-200 text-center space-y-2">
-                      <Package className="w-8 h-8 text-zinc-400 mx-auto" />
-                      <div className="text-zinc-800 font-bold text-sm">No orders matching current filter</div>
-                      <p className="text-xs text-zinc-500">Try changing status filter or clear your search.</p>
+                      <ShoppingBag className="w-8 h-8 text-zinc-400 mx-auto" />
+                      <div className="text-zinc-800 font-bold text-sm">No orders found</div>
+                      <p className="text-xs text-zinc-500">No orders match the current filter or search criteria.</p>
                     </div>
                   );
                 }
 
-                return filteredOrders.map((ord) => {
-                  const trackingMsg = encodeURIComponent(
-                    `Hi ${ord.customerName}, your ASK ENTERPRISES order ${ord.id} is now ${ord.status.toUpperCase()}! ${
-                      ord.courierName ? `Carrier: ${ord.courierName}. ` : ''
-                    }${ord.trackingNumber ? `AWB: ${ord.trackingNumber}. ` : ''}Thank you!`
-                  );
-                  const waUrl = `https://wa.me/91${ord.customerPhone.replace(/\D/g, '')}?text=${trackingMsg}`;
+                const adminStatusList: OrderStatus[] = [
+                  'Order Received',
+                  'Confirmed',
+                  'Ready to Deliver',
+                  'Delivered',
+                  'Delayed'
+                ];
 
+                return filteredOrders.map((ord) => {
                   return (
                     <div 
                       key={ord.id}
                       className="bg-zinc-50 p-5 rounded-2xl border border-zinc-200 space-y-4 hover:border-zinc-300 transition-colors shadow-xs"
+                      id={`admin-order-card-${ord.id}`}
                     >
-                      {/* Top Row */}
-                      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 pb-3.5">
-                        <div className="flex items-center gap-3">
-                          <span className="font-mono font-black text-zinc-900 text-sm sm:text-base">{ord.id}</span>
+                      {/* Top Header Row */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 pb-3">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                          <span className="font-bold text-zinc-950 text-base">{ord.customerName}</span>
+                          <span className="font-mono text-xs font-bold text-zinc-700 bg-white border border-zinc-300 px-2.5 py-0.5 rounded-lg shadow-2xs">
+                            #{ord.id}
+                          </span>
+                          {ord.status === 'Order Received' && (
+                            <span className="bg-red-50 text-red-600 border border-red-200 text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                              🔴 New Order
+                            </span>
+                          )}
                           <span className="text-xs text-zinc-500 flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-zinc-400" />
+                            <Clock className="w-3.5 h-3.5 text-zinc-400" />
                             <span>
-                              {new Date(ord.createdAt).toLocaleString('en-IN', {
+                              Order Date: <strong className="text-zinc-800 font-semibold">{new Date(ord.createdAt).toLocaleString('en-IN', {
                                 day: 'numeric',
                                 month: 'short',
                                 year: 'numeric',
                                 hour: '2-digit',
                                 minute: '2-digit'
-                              })}
+                              })}</strong>
                             </span>
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="flex items-center gap-2">
                           {getStatusBadge(ord.status)}
-                          
-                          <button
-                            onClick={() => {
-                              setStatusModalOrder(ord);
-                              setNewStatus(ord.status);
-                              setStatusNote('');
-                              setCourierName(ord.courierName || '');
-                              setTrackingNumber(ord.trackingNumber || '');
-                              setEstimatedDelivery(ord.estimatedDelivery || '');
-                            }}
-                            className="bg-black hover:bg-zinc-800 text-white px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
-                          >
-                            <Edit3 className="w-3.5 h-3.5" />
-                            <span>Update Status</span>
-                          </button>
                         </div>
                       </div>
 
-                      {/* Middle Row: Items and Customer Info */}
+                      {/* Middle Details Grid */}
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 text-xs">
                         
-                        {/* Customer Delivery info */}
-                        <div className="md:col-span-5 bg-white p-4 rounded-xl border border-zinc-200 space-y-2 shadow-xs">
-                          <div className="font-bold text-zinc-900 flex items-center justify-between">
-                            <span className="text-sm">{ord.customerName}</span>
-                            <a 
-                              href={waUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-zinc-900 hover:underline flex items-center gap-1 text-xs bg-zinc-100 px-2 py-1 rounded-lg border border-zinc-300 font-semibold"
-                            >
-                              <MessageCircle className="w-3.5 h-3.5 text-zinc-900" />
-                              <span>Send Status WhatsApp</span>
-                            </a>
+                        {/* Customer Contact & Address Info */}
+                        <div className="md:col-span-5 bg-white p-4 rounded-xl border border-zinc-200 space-y-2.5 shadow-2xs">
+                          <div className="flex items-center justify-between pb-1 border-b border-zinc-100">
+                            <span className="font-bold text-zinc-900 text-xs uppercase tracking-wider">Customer Details</span>
                           </div>
-                          <div className="text-zinc-600 flex items-center gap-1.5">
-                            <Phone className="w-3.5 h-3.5 text-zinc-500" />
-                            <span className="font-mono text-zinc-800">{ord.customerPhone}</span>
-                          </div>
-                          <div className="text-zinc-700 pt-1 leading-relaxed">{ord.customerAddress}</div>
-                          <div className="text-zinc-500 font-semibold">{ord.customerCity} - {ord.customerPincode}</div>
-                          
-                          {(ord.courierName || ord.trackingNumber) && (
-                            <div className="mt-2 pt-2 border-t border-zinc-200 flex items-center justify-between text-zinc-700">
-                              <span className="text-[11px] text-zinc-500">Carrier: <strong className="text-zinc-900">{ord.courierName || 'Expedited Express'}</strong></span>
-                              {ord.trackingNumber && (
-                                <span className="font-mono text-[10px] bg-zinc-100 px-2 py-0.5 rounded border border-zinc-300 text-zinc-800">
-                                  AWB: {ord.trackingNumber}
-                                </span>
-                              )}
+
+                          <div className="space-y-1">
+                            <div className="text-zinc-700">
+                              <span className="font-semibold text-zinc-900">Name: </span>{ord.customerName}
                             </div>
-                          )}
+                            <div className="flex items-center gap-1.5 text-zinc-700">
+                              <Phone className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                              <span>Phone: <strong className="font-mono text-zinc-900">{ord.customerPhone}</strong></span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-zinc-700">
+                              <MessageCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <span>WhatsApp: <strong className="font-mono text-zinc-900">{ord.customerPhone}</strong></span>
+                            </div>
+                            <div className="text-zinc-700 leading-relaxed pt-1">
+                              <span className="font-semibold text-zinc-900">Delivery Address: </span>
+                              {ord.customerAddress}
+                              <div className="font-bold text-zinc-900 mt-0.5">
+                                {ord.customerCity}{ord.customerPincode ? ` - ${ord.customerPincode}` : ''}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-600">
+                            <span>Payment: <strong className="text-zinc-900">{ord.paymentMethod}</strong></span>
+                            {ord.upiRefNumber && (
+                              <span className="font-mono text-zinc-800 bg-zinc-100 border border-zinc-200 px-1.5 py-0.5 rounded">
+                                UPI: {ord.upiRefNumber}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
-                        {/* Items info & Payment */}
-                        <div className="md:col-span-7 space-y-2.5">
-                          <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
-                            {ord.items.map((i, idx) => (
-                              <div key={idx} className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-zinc-200 shadow-xs">
-                                <div className="flex items-center gap-2.5 truncate">
-                                  <img
-                                    src={i.image}
-                                    alt={i.productName}
-                                    className="w-7 h-7 rounded object-cover bg-zinc-100 shrink-0 border border-zinc-200"
-                                    referrerPolicy="no-referrer"
-                                  />
-                                  <span className="font-semibold text-zinc-900 truncate max-w-xs">{i.productName}</span>
-                                  <span className="text-zinc-500 text-[11px]">x{i.quantity}</span>
+                        {/* Ordered Products & Total Price */}
+                        <div className="md:col-span-7 bg-white p-4 rounded-xl border border-zinc-200 space-y-3 shadow-2xs flex flex-col justify-between">
+                          <div>
+                            <div className="font-bold text-zinc-900 text-xs uppercase tracking-wider pb-1.5 border-b border-zinc-100 mb-2">
+                              Ordered Products ({ord.items.length})
+                            </div>
+                            <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                              {ord.items.map((i, idx) => (
+                                <div key={idx} className="flex items-center justify-between gap-2 p-2 bg-zinc-50 rounded-lg border border-zinc-200/80">
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <img
+                                      src={i.image}
+                                      alt={i.productName}
+                                      className="w-10 h-10 rounded-md object-cover bg-zinc-100 shrink-0 border border-zinc-200"
+                                      referrerPolicy="no-referrer"
+                                    />
+                                    <div className="min-w-0">
+                                      <div className="font-bold text-zinc-900 truncate text-xs" title={i.productName}>
+                                        {i.productName}
+                                      </div>
+                                      <div className="text-zinc-500 text-[11px] flex items-center gap-2 mt-0.5">
+                                        <span>Quantity: <strong className="font-mono text-zinc-800 font-bold">{i.quantity}</strong></span>
+                                        <span>Price: <strong className="font-mono text-zinc-800">{formatINR(i.price)}</strong></span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <span className="font-mono font-bold text-xs text-zinc-900 shrink-0">
+                                    {formatINR(i.price * i.quantity)}
+                                  </span>
                                 </div>
-                                <span className="font-mono font-bold text-zinc-900 shrink-0">
-                                  {formatINR(i.price * i.quantity)}
-                                </span>
-                              </div>
-                            ))}
+                              ))}
+                            </div>
                           </div>
 
-                          <div className="flex items-center justify-between pt-2 border-t border-zinc-200 font-bold">
-                            <span className="text-zinc-600 flex items-center gap-2">
-                              <span>Payment: <strong className="text-zinc-900">{ord.paymentMethod}</strong></span>
-                              {ord.upiRefNumber && (
-                                <span className="font-mono text-zinc-800 bg-zinc-100 border border-zinc-300 px-2 py-0.5 rounded text-[10px]">
-                                  UPI Ref: {ord.upiRefNumber}
-                                </span>
-                              )}
+                          <div className="pt-2 border-t border-zinc-200 flex items-center justify-between font-bold">
+                            <span className="text-zinc-600 text-xs">Total Price:</span>
+                            <span className="text-base font-mono text-zinc-950 font-black">
+                              {formatINR(ord.total)}
                             </span>
-                            <span className="text-sm font-mono text-zinc-900 font-black">Total: {formatINR(ord.total)}</span>
                           </div>
                         </div>
 
                       </div>
 
-                      {/* Audit Status History Timeline */}
-                      {ord.statusHistory && ord.statusHistory.length > 0 && (
-                        <div className="pt-2 border-t border-zinc-200">
-                          <div className="text-[11px] font-bold text-zinc-600 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-zinc-600" />
-                            <span>Status History Timeline ({ord.statusHistory.length} updates)</span>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {ord.statusHistory.map((h, hIdx) => (
-                              <div 
-                                key={hIdx} 
-                                className="bg-white border border-zinc-200 text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-xs"
-                              >
-                                <span className="w-1.5 h-1.5 rounded-full bg-black shrink-0" />
-                                <span className="font-bold text-zinc-900">{h.status}</span>
-                                <span className="text-[10px] text-zinc-500 font-mono">
-                                  {new Date(h.timestamp).toLocaleString('en-IN', {
-                                    day: 'numeric',
-                                    month: 'short',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
+                      {/* WhatsApp Customer Section */}
+                      <div 
+                        className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 space-y-3 shadow-2xs" 
+                        id={`whatsapp-customer-card-${ord.id}`}
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white shrink-0 shadow-2xs">
+                              <MessageCircle className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-xs text-zinc-950">WhatsApp Customer</span>
+                                <span className="text-[11px] font-mono font-bold text-emerald-900 bg-white border border-emerald-300 px-2 py-0.5 rounded-md">
+                                  {ord.customerPhone}
                                 </span>
-                                {h.note && (
-                                  <span className="text-zinc-600 text-[10px] max-w-[200px] truncate" title={h.note}>
-                                    • {h.note}
-                                  </span>
-                                )}
                               </div>
-                            ))}
+                              <p className="text-[11px] text-zinc-600">
+                                Contact customer <strong>{ord.customerName}</strong> directly on their WhatsApp
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setOpenWhatsAppEditBoxes((prev) => ({
+                                  ...prev,
+                                  [ord.id]: !prev[ord.id],
+                                }))
+                              }
+                              id={`edit-message-btn-${ord.id}`}
+                              className="inline-flex items-center gap-1.5 bg-white hover:bg-zinc-100 text-zinc-800 border border-zinc-300 font-bold text-xs px-3 py-2 rounded-xl transition-colors shadow-2xs cursor-pointer"
+                            >
+                              <Edit3 className="w-3.5 h-3.5 text-zinc-600" />
+                              <span>{openWhatsAppEditBoxes[ord.id] ? 'Hide Message' : 'Edit Message'}</span>
+                            </button>
+
+                            <a
+                              href={`https://wa.me/${formatWhatsAppCustomerPhone(ord.customerPhone)}?text=${encodeURIComponent(
+                                getOrderWhatsAppMessage(ord)
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              id={`whatsapp-customer-btn-${ord.id}`}
+                              className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition-colors shadow-xs cursor-pointer"
+                            >
+                              <MessageCircle className="w-3.5 h-3.5 text-white" />
+                              <span>WhatsApp Customer</span>
+                            </a>
                           </div>
                         </div>
-                      )}
+
+                        {/* Pre-filled Editable Message Area */}
+                        {openWhatsAppEditBoxes[ord.id] && (
+                          <div className="pt-3 border-t border-emerald-200/80 space-y-2.5">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="font-bold text-zinc-800 flex items-center gap-1.5">
+                                <span>Prepared WhatsApp Message</span>
+                                <span className="text-[10px] font-normal text-zinc-500">(Admin can edit this message before sending)</span>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setEditedWhatsAppMessages((prev) => ({
+                                    ...prev,
+                                    [ord.id]: generateDefaultOrderWhatsAppMessage(ord),
+                                  }))
+                                }
+                                className="text-[11px] font-semibold text-emerald-800 hover:text-emerald-950 underline cursor-pointer"
+                              >
+                                Reset to Default Template
+                              </button>
+                            </div>
+
+                            <textarea
+                              rows={7}
+                              value={getOrderWhatsAppMessage(ord)}
+                              onChange={(e) =>
+                                setEditedWhatsAppMessages((prev) => ({
+                                  ...prev,
+                                  [ord.id]: e.target.value,
+                                }))
+                              }
+                              className="w-full bg-white border border-emerald-300 rounded-xl p-3 text-xs text-zinc-900 font-sans focus:border-emerald-600 focus:outline-none resize-none shadow-2xs leading-relaxed"
+                              placeholder="Prepared message for customer..."
+                            />
+
+                            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                              <span className="text-[11px] text-zinc-600">
+                                Opens WhatsApp directly with customer <strong>{ord.customerName}</strong> ({ord.customerPhone}). You manually press Send inside WhatsApp.
+                              </span>
+
+                              <a
+                                href={`https://wa.me/${formatWhatsAppCustomerPhone(ord.customerPhone)}?text=${encodeURIComponent(
+                                  getOrderWhatsAppMessage(ord)
+                                )}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                id={`send-on-whatsapp-btn-${ord.id}`}
+                                className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition-colors shadow-xs cursor-pointer"
+                              >
+                                <MessageCircle className="w-3.5 h-3.5 text-white" />
+                                <span>Send on WhatsApp</span>
+                              </a>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Simple Admin Status Option Row */}
+                      <div className="pt-3 border-t border-zinc-200/90 flex flex-wrap items-center justify-between gap-2.5">
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-800">
+                          <span>Change Status:</span>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                          {adminStatusList.map((st) => {
+                            const isCurrent = ord.status === st;
+                            return (
+                              <button
+                                key={st}
+                                onClick={() => onUpdateOrderStatus(ord.id, st)}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs ${
+                                  isCurrent
+                                    ? 'bg-black text-white border border-black shadow-xs ring-2 ring-black/20'
+                                    : 'bg-white hover:bg-zinc-100 text-zinc-700 hover:text-black border border-zinc-300'
+                                }`}
+                              >
+                                {isCurrent && <Check className="w-3.5 h-3.5 text-white" />}
+                                <span>{st}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
 
                     </div>
                   );
@@ -1022,135 +1262,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               })()}
             </div>
 
-          </div>
-        )}
-
-        {/* MODAL: ORDER STATUS & TRACKING UPDATER */}
-        {statusModalOrder && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-            <div className="bg-white border border-zinc-200 rounded-3xl w-full max-w-lg p-6 space-y-5 shadow-2xl text-zinc-900">
-              
-              <div className="flex items-center justify-between border-b border-zinc-200 pb-3">
-                <div>
-                  <h4 className="text-base font-black text-zinc-900 flex items-center gap-2">
-                    <span>Update Order Status</span>
-                    <span className="font-mono text-xs bg-zinc-100 border border-zinc-300 px-2 py-0.5 rounded text-zinc-800">
-                      {statusModalOrder.id}
-                    </span>
-                  </h4>
-                  <p className="text-xs text-zinc-500">Customer: {statusModalOrder.customerName} ({statusModalOrder.customerCity})</p>
-                </div>
-                <button
-                  onClick={() => setStatusModalOrder(null)}
-                  className="p-1.5 text-zinc-400 hover:text-black rounded-lg hover:bg-zinc-100"
-                >
-                  <XCircle className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Status Select */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-700">New Order Status *</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {(['Confirmed', 'Packed', 'Dispatched', 'Delivered', 'Pending', 'Cancelled'] as OrderStatus[]).map((st) => (
-                    <button
-                      type="button"
-                      key={st}
-                      onClick={() => setNewStatus(st)}
-                      className={`p-2.5 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                        newStatus === st
-                          ? 'bg-black text-white border-black shadow-sm'
-                          : 'bg-zinc-50 border-zinc-300 text-zinc-700 hover:border-zinc-400'
-                      }`}
-                    >
-                      {st === 'Confirmed' && <Check className="w-3.5 h-3.5" />}
-                      {st === 'Packed' && <Box className="w-3.5 h-3.5" />}
-                      {st === 'Dispatched' && <Truck className="w-3.5 h-3.5" />}
-                      {st === 'Delivered' && <CheckCircle2 className="w-3.5 h-3.5" />}
-                      {st === 'Cancelled' && <XCircle className="w-3.5 h-3.5" />}
-                      {st === 'Pending' && <Clock className="w-3.5 h-3.5" />}
-                      <span>{st}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Status Note */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-700">Status Update Note (Visible in customer timeline)</label>
-                <input
-                  type="text"
-                  value={statusNote}
-                  onChange={(e) => setStatusNote(e.target.value)}
-                  placeholder={`e.g. Products quality inspected & bubble wrapped...`}
-                  className="w-full bg-zinc-50 border border-zinc-300 rounded-xl px-3.5 py-2.5 text-xs text-zinc-900 placeholder-zinc-400 focus:border-zinc-800 focus:outline-none"
-                />
-              </div>
-
-              {/* Courier & AWB Details */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-zinc-700">Courier Partner</label>
-                  <input
-                    type="text"
-                    value={courierName}
-                    onChange={(e) => setCourierName(e.target.value)}
-                    placeholder="BlueDart / Delhivery / DTDC..."
-                    className="w-full bg-zinc-50 border border-zinc-300 rounded-xl px-3 py-2 text-xs text-zinc-900 placeholder-zinc-400 focus:border-zinc-800 focus:outline-none"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-zinc-700">Tracking / AWB Number</label>
-                  <input
-                    type="text"
-                    value={trackingNumber}
-                    onChange={(e) => setTrackingNumber(e.target.value)}
-                    placeholder="e.g. BD982741920IN"
-                    className="w-full bg-zinc-50 border border-zinc-300 rounded-xl px-3 py-2 text-xs text-zinc-900 font-mono placeholder-zinc-400 focus:border-zinc-800 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Estimated Delivery */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-700">Estimated Delivery Date</label>
-                <input
-                  type="text"
-                  value={estimatedDelivery}
-                  onChange={(e) => setEstimatedDelivery(e.target.value)}
-                  placeholder="e.g. Within 2-3 business days"
-                  className="w-full bg-zinc-50 border border-zinc-300 rounded-xl px-3.5 py-2 text-xs text-zinc-900 placeholder-zinc-400 focus:border-zinc-800 focus:outline-none"
-                />
-              </div>
-
-              {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-zinc-200">
-                <button
-                  type="button"
-                  onClick={() => setStatusModalOrder(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-zinc-600 hover:text-black hover:bg-zinc-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onUpdateOrderStatus(statusModalOrder.id, newStatus, {
-                      note: statusNote,
-                      courierName,
-                      trackingNumber,
-                      estimatedDelivery,
-                    });
-                    setStatusModalOrder(null);
-                  }}
-                  className="bg-black hover:bg-zinc-800 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
-                >
-                  <Save className="w-3.5 h-3.5" />
-                  <span>Save Status Update</span>
-                </button>
-              </div>
-
-            </div>
           </div>
         )}
 

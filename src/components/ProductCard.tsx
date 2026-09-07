@@ -36,15 +36,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div 
-      className="group relative flex flex-col bg-white rounded-2xl border border-zinc-200 hover:border-zinc-400 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+      className="group relative flex flex-col bg-white rounded-2xl border border-zinc-200 hover:border-zinc-400 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden h-full"
       id={`product-card-${product.id}`}
     >
-      {/* Top Image Container */}
-      <div className="relative w-full pt-[80%] bg-zinc-100 overflow-hidden cursor-pointer" onClick={() => onViewDetails(product)}>
+      {/* Top Image Container - Uniform Square Aspect Ratio */}
+      <div className="relative w-full aspect-square bg-zinc-100 overflow-hidden cursor-pointer shrink-0" onClick={() => onViewDetails(product)}>
         <img
           src={product.image}
           alt={product.name}
-          className="absolute inset-0 w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={(e) => {
@@ -123,14 +123,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {/* Product Name */}
           <h3 
             onClick={() => onViewDetails(product)}
-            className="font-bold text-zinc-900 text-sm sm:text-base leading-snug line-clamp-2 cursor-pointer hover:underline transition-all"
+            className="font-bold text-zinc-900 text-sm sm:text-base leading-snug line-clamp-2 min-h-[2.5rem] cursor-pointer hover:underline transition-all"
             title={product.name}
           >
             {product.name}
           </h3>
 
           {/* Short Description */}
-          <p className="text-xs text-zinc-600 line-clamp-2 leading-relaxed font-normal">
+          <p className="text-xs text-zinc-600 line-clamp-2 min-h-[2rem] leading-relaxed font-normal">
             {product.shortDescription}
           </p>
         </div>
@@ -195,10 +195,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             className={`w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-black transition-all shadow-sm ${
               isOutOfStock
                 ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed border border-zinc-200'
-                : 'bg-black hover:bg-zinc-800 text-white hover:scale-[1.01] active:scale-[0.99] border border-black'
+                : 'bg-yellow-400 hover:bg-yellow-500 text-zinc-950 hover:scale-[1.01] active:scale-[0.99] border border-yellow-500 shadow-xs'
             }`}
           >
-            <Zap className="w-3.5 h-3.5 fill-current" />
+            <Zap className="w-3.5 h-3.5 fill-current text-zinc-950" />
             <span>Buy Now</span>
           </button>
 

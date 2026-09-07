@@ -277,9 +277,9 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                   onClick={() => onBuyNow(product, quantity)}
                   disabled={isOutOfStock}
                   id="details-buy-now-btn"
-                  className="flex items-center justify-center gap-2 bg-black hover:bg-zinc-800 text-white py-3 px-4 rounded-xl text-sm font-black shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+                  className="flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border border-yellow-500 py-3 px-4 rounded-xl text-sm font-black shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
                 >
-                  <Zap className="w-4 h-4 fill-current" />
+                  <Zap className="w-4 h-4 fill-current text-zinc-950" />
                   <span>Instant Buy Now</span>
                 </button>
               </div>
